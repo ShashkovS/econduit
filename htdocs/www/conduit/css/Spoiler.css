@@ -1,0 +1,15 @@
+.conduit_spoiler {
+    cursor: pointer;
+    border-bottom: 2px dotted;
+    font-size: 140%;
+    margin: 0.2em;
+    display: inline-block;
+}
+
+.conduit_spoiler:not([data-state="opened"]) {
+    color: grey;
+}
+
+.conduit_spoiler:not([data-state="opened"]) ~ * {
+    display:none;
+}

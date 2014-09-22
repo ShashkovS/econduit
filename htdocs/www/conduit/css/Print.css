@@ -1,0 +1,14 @@
+/* Прячем всё лишнее */
+li:not(.print), .floatHeader *{
+    display: none;
+}
+
+/* Прячем текст ячейки "Распечатать" */
+.printButton {
+    text-indent: 200%;
+    overflow: hidden;
+}
+
+body {
+  margin: 0 -1cm;
+}

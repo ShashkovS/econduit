@@ -1,0 +1,50 @@
+/* Внешний вид самой таблицы */
+.stats {
+    border-collapse: collapse;
+    border: thin solid;
+    cursor: default;
+    font-family: "Arial Narrow";
+}
+.stats th, .stats td {
+    border: thin solid;
+}
+
+.stats .total {
+    border-left: medium double;
+    border-right: medium double;
+}
+.stats tbody td {
+    text-align: center;
+    cursor: pointer;
+}
+
+/* Минимальная ширина столбцов */
+.stats .list {
+    min-width: 3em;
+}
+/* Форматирование имён школьников */
+.stats .pupilName {
+    text-align: left;
+    padding: 0.35em 0.4em 0.35em 0.25em;
+}
+
+/* Подсветка при наведении курсора */
+.stats:not(#d) .mouseOver {
+    background-color: yellow;
+}
+
+.tablesorter-stickyHeader {
+    background-color: #FFF;
+}
+
+.stats_container {
+    padding: 0 10px;
+}
+
+.stats .sortIndex {
+    background-color: #8dbdd8;
+}
+
+.stats thead th {
+    cursor: pointer;
+}

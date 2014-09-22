@@ -1,0 +1,20 @@
+.ui-icon:after {
+    content: "\21F2";
+    font-size: 20px;
+    line-height: 0;
+}
+.ui-resizable {
+	position: relative;
+}
+.ui-resizable-handle {
+	position: absolute;
+	-ms-touch-action: none;
+	touch-action: none;
+}
+.ui-resizable-se {
+	cursor: se-resize;
+	width: 16px;
+	height: 16px;
+	right: 0;
+	bottom: 0;
+}

@@ -1,0 +1,13 @@
+.xml1-attributename { color: #808000; }
+.xml1-attributevalue { color: #0000FF; }
+.xml1-cdatasection { color: #996666; font-style: italic; }
+.xml1-comment { color: #008000; font-style: italic; }
+.xml1-doctypesection { color: #800000; font-style: italic; }
+.xml1-elementname { color: #800080; }
+.xml1-entityreference { color: #800000; }
+.xml1-namespaceattributename { color: #808000; }
+.xml1-namespaceattributevalue { color: #000080; }
+.xml1-processinginstruction { color: #FF68FF; font-weight: bold; font-style: italic; }
+.xml1-symbol { color: #800080; }
+.xml1-text { color: #000000; }
+.xml1-whitespace { color: #008080; font-style: italic; }
