@@ -2,15 +2,18 @@
     function Panel() {
 
         function ChangeName(evt, rowIndex) {
+            //var $ca = $(evt.target).closest('.appendGrid');
             var $caller = $(evt.target).closest('.appendGrid');
-            var columns = $caller.appendGrid('getColumns');
+            var cols = $caller.appendGrid('getColumns');
             
             var ci = $(evt.target).closest('td')[0].cellIndex;
-            var name = columns[ci]['name'];
+            var name = cols[ci+1]['name'];
+            
+            alert(name);
             
             var id = $caller.appendGrid('getCtrlValue', 'id', rowIndex);
-            var value = $caller.appendGrid('getCtrlValue', name, rowIndex);
-            alert('У школьника номер ' + id + ' значение поля `' + name + '` изменено на "' + value + '"');
+            var new_name = $caller.appendGrid('getCtrlValue', 'name', rowIndex);
+            alert('У школьника номер ' + id + ' имя изменено на ' + new_name);
         }
         
         function ChangeTeacher(evt, rowIndex) {

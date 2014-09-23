@@ -22,6 +22,7 @@ $Log = "";
 //      2. За этот день уже внесена хотя бы одна задача --- чтобы не надоедать всем в каникулы.
 function work_day() {
     global $conduit_db, $Class;
+    global $Log;
     
     // Проверяем день недели
     $sql = "SELECT 
@@ -63,7 +64,7 @@ function work_day() {
 define('N', 7);
 function check_teacher($User, $Name, $Email) {
     global $conduit_db, $Class;
-    
+    global $Log;
     
     $Log .= "check_teacher: Проверка учителя $User ($Name, $Email).<br/>";
     
@@ -107,6 +108,7 @@ function check_teacher($User, $Name, $Email) {
 
 function write_to_teacher($FullName, $Email) {
     global $Class;
+    global $Log;
      
     $Log .= "write_to_teacher: необходимо напомнить: $FullName, $Email.<br/>"; 
      
@@ -133,19 +135,21 @@ function write_to_teacher($FullName, $Email) {
 }
 
 function write_to_all_teachers() {
-    global $conduit_db;
-
+    global $conduit_db, $Class;
+    global $Log;
+    
     // Вначале определяем, учебный ли сегодня день
     if (!work_day()) {
         $Log .= "write_to_all_teachers: День не рабочий.<br/>";
         return;
     }
+    $Log .= "write_to_all_teachers: День рабочий.<br/>";
     
     // Теперь пробегаемся по всем учителям и проверяем каждого
     $sql = "SELECT
                 `PUser`.`User`, `PUser`.`DisplayName`, `PUser`.`Email`
             FROM
-                `PUser` INNER JOIN `PPupil` ON `PResult`.`PupilID` = `PPupil`.`ID`
+                `PUser`
             WHERE
                 `PUser`.`User` IN (
                     SELECT 
@@ -166,8 +170,6 @@ function write_to_all_teachers() {
 $Log .= "Работа начата.<br/>";
 write_to_all_teachers();
 
-send_mime_mail("Электронный кондуит", "reminder@econduit.ru",  "Женя", "eugene57@yandex.ru", 'UTF-8', 'UTF-8', "Отчёт о работе", $Log, TRUE);
-
-echo $Log;
+//send_mime_mail("Электронный кондуит", "reminder@econduit.ru",  "Женя", "eugene57@yandex.ru", 'UTF-8', 'UTF-8', "Отчёт о работе", $Log, TRUE);
 
 ?>
