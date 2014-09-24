@@ -1,7 +1,29 @@
+/* Печатаем в альбоме */
+@media print {  
+    @page {  
+        size: landscape; 
+        size: 297mm 210mm; 
+        margin: -30mm 0 -30mm;  
+    }  
+}
+
+.conduit_spoiler { 
+	page-break-after : avoid 
+}
+li { 
+	page-break-after : always 
+}
+
+
 /* Прячем всё лишнее */
+header, .bar, .navbar, nav, li:not(.print), .floatHeader *{
+    display: none;
+}
+/* Прячем всё лишнее 
 li:not(.print), .floatHeader *{
     display: none;
 }
+*/
 
 /* Прячем текст ячейки "Распечатать" */
 .printButton {
@@ -9,6 +31,19 @@ li:not(.print), .floatHeader *{
     overflow: hidden;
 }
 
-body {
-  margin: 0 -1cm;
+.conduit {
+    margin: 1mm auto;
 }
+
+body {
+  margin: 0 auto;
+  text-align:center;
+}
+
+body {
+          -webkit-transform: scale(0.75);  /* Saf3.1+, Chrome */
+          -moz-transform: scale(0.75);  /* FF3.5+ */
+          -ms-transform: scale(0.75);  /* IE9 */
+          -o-transform: scale(0.75);  /* Opera 10.5+ */
+          transform: scale(0.75);
+      }

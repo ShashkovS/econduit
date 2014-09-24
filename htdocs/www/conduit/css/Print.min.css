@@ -1,1 +1,1 @@
-li:not(.print),.floatHeader *{display:none}.printButton{text-indent:200%;overflow:hidden}body{margin:0 -1cm}
+@media print{@page{size:landscape;size:297mm 210mm;margin:-30mm 0}}.conduit_spoiler{page-break-after:avoid}li{page-break-after:always}header,.bar,.navbar,nav,li:not(.print),.floatHeader *{display:none}.printButton{text-indent:200%;overflow:hidden}.conduit{margin:1mm auto}body{margin:0 auto;text-align:center;-webkit-transform:scale(0.75);-moz-transform:scale(0.75);-ms-transform:scale(0.75);-o-transform:scale(0.75);transform:scale(0.75)}
