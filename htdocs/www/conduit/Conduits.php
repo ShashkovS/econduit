@@ -42,7 +42,7 @@ require_once('GetClass.inc.php');
     <style type="text/css">
 <?php
         echo "/* Conduit */\n";
-        include('css/Conduit.min.css');
+        include('css/Conduit.css');
         echo "\n/* Spoiler */\n";
         include('css/Spoiler.min.css');
         echo "\n/* MathML */\n";
