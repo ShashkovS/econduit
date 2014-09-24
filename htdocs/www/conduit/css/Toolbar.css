@@ -16,14 +16,24 @@
     color: #AAA;
     cursor: auto;
 }
-.tool button, .tool span{
+.tool button, .tool span {
     background-color: #E5E5E5;
     cursor: pointer;
     height: 100%;
-    padding: 0 0.5em;
-}
-#mode{
     display: inline-block;
+}
+#mode {
+    padding: 0 0.5em;    
+}
+#changeMarkType {
+    width: 1.6em;
+    text-align: center;
+}
+#changeMarkType[data-state="0"]:before {
+    content: "\1f4c5";
+}
+#changeMarkType[data-state="1"]:before {
+    content: "\b1";
 }
 #mode[data-state="0"]:before {
     content: "\2714";
@@ -36,4 +46,29 @@
 }
 option.current {
     font-weight: bold;
+}
+
+.select-editable { 
+    position: relative; 
+    background-color: white; 
+    display: inline-block;
+    width: 10em;
+    top: -1.4em;
+}
+.select-editable select { 
+    position: absolute; 
+    top: 0px; 
+    left: 0px; 
+    width: 8em; 
+}
+.select-editable input { 
+    position: absolute; 
+    top: 1px; 
+    left: 1px; 
+    width: 6em; 
+    padding: 1px; 
+    border: none; 
+}
+.select-editable select:focus, .select-editable input:focus {
+    outline: none; 
 }

@@ -257,6 +257,16 @@
             }
         }
         
+        function changeMarkType() {
+            var mode = 1 - $(this).attr('data-state');
+            $(this).attr('data-state', mode);
+            if (mode) { // Установлен режим селектора плюсов-минусов
+            
+            } else {    // Установлен режим календаря
+            
+            }
+        }
+        
         function SetModeState (i) {
             $('#mode').attr('data-state', i).text([' Обычный ввод', ' Удалить один раз',  ' Удалять всегда'][i]);
         }
@@ -392,7 +402,10 @@
                 defaultDate: today
             })
             .datepicker('setDate', today);
-                        
+
+            // Режим метки
+            $('#changeMarkType').click(changeMarkType);
+            
             // Кнопка отмены
             $('#undoButton').click(Undo).attr('disabled', 'disabled');
             
