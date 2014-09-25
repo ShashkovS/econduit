@@ -55,17 +55,11 @@ require_once('GetClass.inc.php');
         include('css/jquery-ui.datepicker.min.css');
 ?>
     </style>
-<?php
-if ($ConduitUser->may_manage('Marks')) {
-?>
     <style type="text/css" media="print">
 <?php
         include('css/Print.min.css');
 ?>
     </style>
-<?php
-}
-?>
 </head>
 
 <body>
@@ -90,5 +84,6 @@ if ($ConduitUser->may_manage('Marks')) {
         Conduit.init();
         $('#Conduits').addClass('current');
     </script>
+    <?php include('yandex.metrika.min.html'); ?>
 </body>
 </html>
