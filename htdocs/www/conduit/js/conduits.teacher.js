@@ -382,11 +382,15 @@
             $conduit_container = $conduit_container || $('#conduits');
             $('#pupil').val(''); // Сбрасываем выбор конкретного школьника
             FilterPupils($conduit_container);
+            RequestStack = []; // Сбрасываем список отката
+            $('#undoButton').attr('disabled', 'disabled');
         }
         
         function PupilChanged($conduit_container) {
             $conduit_container = $conduit_container || $('#conduits');
             FilterPupils($conduit_container);
+            RequestStack = []; // Сбрасываем список отката
+            $('#undoButton').attr('disabled', 'disabled');
         }
 
         function SelectPupil($PupilID) {
