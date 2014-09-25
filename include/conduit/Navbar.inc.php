@@ -21,6 +21,12 @@ if (!defined('IN_CONDUIT')){
 <?php if ($ConduitUser->may_manage('Marks')) { ?>
                 <li id="Stats"><a title="Статистика" href="Statistics.php">Статистика</a></li>
 <?php } ?>
+<?php if ($ConduitUser->may_manage('Marks')) { ?>
+                <li id="Console"><a title="Консоль" href="Console.php">Консоль</a></li>
+<?php } ?>
+<?php if ($ConduitUser->may_manage('Marks')) { ?>
+                <li id="Help"><a title="Помощь" href="Help.php">Помощь</a></li>
+<?php } ?>
 			</ul>
 
 		</nav>

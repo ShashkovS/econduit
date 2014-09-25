@@ -6,6 +6,7 @@ if (!defined('IN_CONDUIT')){
 }
 
 require_once('FillTeachersList.inc.php');
+require_once('FillPupilsList.inc.php');
 
 ?>
         <section class="bar">
@@ -46,6 +47,10 @@ require_once('FillTeachersList.inc.php');
                 <li class="tool">
                     <label for="teacher">Учитель:</label>
 <?php fillTeachersList($Class['ID']); ?>
+                </li>
+                <li class="tool">
+                    <label for="pupil">Школьник:</label>
+<?php fillPupilsList($Class['ID']); ?>
                 </li>
             </ul>
         </section>

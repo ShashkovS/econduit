@@ -1,13 +1,13 @@
 // Адаптация jQuery.FloatHeader для целей кондуита
 (function(){
-	$.fn.floatHeader = function() {
-		return this.each(function () {	
-			var self = $(this);
-			self.floatBox = self.siblings('.floatHeader');
-			var table = self.floatBox.children('table');
-			
-			// bind to the scroll event
-			$(window).scroll(function() {
+    $.fn.floatHeader = function() {
+        return this.each(function () {    
+            var self = $(this);
+            self.floatBox = self.siblings('.floatHeader');
+            var table = self.floatBox.children('table');
+            
+            // bind to the scroll event
+            $(window).scroll(function() {
                 if (showHeader(self, self.floatBox)) {
                     if (!self.floatBox.is(':visible')) {
                         recalculateColumnWidth(table, self);
@@ -19,7 +19,7 @@
                 } else {
                     self.floatBox.hide();
                 }
-			});
+            });
             
             $(window).resize(function() {
                 if(self.floatBox.is(':visible')) {
@@ -28,39 +28,39 @@
             });
             
             this.fhRecalculate = function() {
-				recalculateColumnWidth(table, self);
-			};
-		});
-	}
-	
-	// Recalculates the column widths of the floater.
-	function recalculateColumnWidth(target, template) {
-		var tableWidth = template.width();
+                recalculateColumnWidth(table, self);
+            };
+        });
+    }
+    
+    // Recalculates the column widths of the floater.
+    function recalculateColumnWidth(target, template) {
+        var tableWidth = template.width();
         if (navigator.userAgent.indexOf("Firefox") > -1 && tableWidth < window.innerWidth) {
             target.css('width','');
         } else {
             target.width(tableWidth);
         }
-		var dst = target.find('thead th:first-child');
-		template.find('th').each(function(index, element) {
+        var dst = target.find('thead th:first-child');
+        template.find('th').each(function(index, element) {
             dst = dst.width($(element).width()).next();
-		});
-	}
-	
-	// Determines if the element is visible
-	function showHeader(element, floater) {
-        if (!element.is(':visible')) {
+        });
+    }
+    
+    // Determines if the element is visible
+    function showHeader(element, floater) {
+        if (!element.is(':visible') || !show_floating_header) {
             return false;
         }
-		var top = $(window).scrollTop();
-		var y0 = element.offset().top;
-		var height = element.height() - floater.height();
-		var foot = element.children('tfoot');
-		if (foot.length > 0) {
-			height -= foot.height();
-		}
-		return y0 <= top && top <= y0 + height;
-	}
+        var top = $(window).scrollTop();
+        var y0 = element.offset().top;
+        var height = element.height() - floater.height();
+        var foot = element.children('tfoot');
+        if (foot.length > 0) {
+            height -= foot.height();
+        }
+        return y0 <= top && top <= y0 + height;
+    }
 
     function Conduit() {
         
@@ -70,6 +70,7 @@
         var RequestStack = [];
         
         // public properties:
+        this.show_floating_header = true;
         
         // private methods:
         function MouseOverCell() {
@@ -124,13 +125,16 @@
         // Пользователь кликнул по спойлеру
         function MouseClickSploiler() {
             var ClassID = Globals.ClassID,
-                ListID = $(this).attr('data-id');
+                ListID = $(this).attr('data-id'),
+                box = $(this).closest('li');
             if ($(this).attr('data-state') === 'opened') {
                 // Спойлер уже открыт
                 // Закрываем его
                 $(this).attr('data-state', 'closed');
                 // Запоминаем, что он закрыт
                 SaveSpoilerState(ClassID, ListID, false);
+                // Скрываем весь блок из печати
+                box.removeClass('print');                
             } else {
                 // Спойлер был закрыт
                 if ($(this).attr('data-state') === 'empty') {
@@ -155,7 +159,7 @@
                                     // Добавляем подсветку сегодняшних меток
                                     AddHighlight($conduit_container);
                                     // Применяем фильтр по учителю
-                                    TeacherChanged($conduit_container);
+                                    FilterPupils($conduit_container);
                                  },
                         error:   function(jqXHR, textStatus, errorThrown) {
                                     alert('Не удалось получить ответ от сервера: ' + jqXHR.status + ' ' + textStatus);
@@ -165,6 +169,8 @@
                 $(this).attr('data-state', 'opened');
                 // Запоминаем, что он открыт
                 SaveSpoilerState(ClassID, ListID, true);
+                // Добавляем этот блок в область печати
+                box.addClass('print');
             }
         }
         
@@ -185,15 +191,15 @@
         
         // Добавление в массив Request запроса на обновление ещё одной ячейки
         function Add2Request(Request, $conduit, X, Y, Mark) {
-			// Проверяем, что ячейка видима. В противном случае ничего не делаем.
-			$row = $conduit.find('tbody tr').eq(Y);
-			if ($row.is(':visible')) {
-				Request.push({
-					Pupil:    $row.attr('data-pupil'),
-					Problem:  $conduit.find('.headerRow').eq(0).children().eq(X).attr('data-problem'),
-					Mark:     Mark  
-				});
-			}
+            // Проверяем, что ячейка видима. В противном случае ничего не делаем.
+            $row = $conduit.find('tbody tr').eq(Y);
+            if ($row.is(':visible')) {
+                Request.push({
+                    Pupil:    $row.attr('data-pupil'),
+                    Problem:  $conduit.find('.headerRow').eq(0).children().eq(X).attr('data-problem'),
+                    Mark:     Mark  
+                });
+            }
         }
 
         // Отправка на сервер запроса на обновление значений набора ячеек.
@@ -356,18 +362,79 @@
             AddHighlight();
         }   
 
-        function TeacherChanged($conduit_container) {
+
+        function FilterPupils($conduit_container) {
             $conduit_container = $conduit_container || $('#conduits');
             
             var Teacher = $('#teacher').val();
-            if (Teacher === '') { // `All` selected
-                $conduit_container.find('.conduit tbody tr').show();
+            var Pupil = $('#pupil').val();
+            if (Pupil === '' && Teacher === '') {
+                $('#conduits').find('.conduit tfoot').show();
+                this.show_floating_header = true
             } else {
-                $conduit_container.find('.conduit tbody tr:not([data-teacher="' + Teacher + '"])').hide();
-                $conduit_container.find('.conduit tbody tr[data-teacher="' + Teacher + '"]').show();
+                $('#conduits').find('.conduit tfoot').hide();
+                this.show_floating_header = false
+            }
+            if (Pupil === '') { // `All` selected
+                if (Teacher === '') { // `All` selected
+                    $conduit_container.find('.conduit tbody tr').show();
+                } else {
+                    $conduit_container.find('.conduit tbody tr:not([data-teacher="' + Teacher + '"])').hide();
+                    $conduit_container.find('.conduit tbody tr[data-teacher="' + Teacher + '"]').show();
+                }
+            } else {
+                $conduit_container.find('.conduit tbody tr:not([data-pupil="' + Pupil + '"])').hide();
+                $conduit_container.find('.conduit tbody tr[data-pupil="' + Pupil + '"]').show();
             }
         }
+
+        function TeacherChanged($conduit_container) {
+            $conduit_container = $conduit_container || $('#conduits');
+            $('#pupil').val(''); // Сбрасываем выбор конкретного школьника
+            FilterPupils($conduit_container);
+            RequestStack = []; // Сбрасываем список отката
+            $('#undoButton').attr('disabled', 'disabled');
+        }
         
+        function PupilChanged($conduit_container) {
+            $conduit_container = $conduit_container || $('#conduits');
+            FilterPupils($conduit_container);
+            RequestStack = []; // Сбрасываем список отката
+            $('#undoButton').attr('disabled', 'disabled');
+        }
+
+        function SelectPupil($PupilID) {
+            var Pupil = $('#pupil').val();
+            if (Pupil === $PupilID) { // Данный школьник и так уже выбран
+                $('#pupil').val('');
+            } else {
+                $('#pupil').val($PupilID);
+            }
+            var $conduit_container = $('#conduits');
+            FilterPupils($conduit_container)
+        }
+        // Пользователь дважды кликнул по ФИО ученика
+        function MouseDoubleClickName() {
+            var PupilID = $(this).closest('tr').attr('data-pupil');
+            SelectPupil(PupilID);
+        }
+        // Пользователь один раз кликнул по ФИО. Ловим долгое нажатие
+        function MouseClickName() {
+            if(longpress) { // if detect hold, stop onclick function
+                return false;
+            };        
+        }
+        function MouseDownName() {
+            var PupilID = $(this).closest('tr').attr('data-pupil');
+            longpress = false; //longpress is false initially
+            pressTimer = window.setTimeout(function(PupilID){
+                SelectPupil(PupilID);
+                longpress = true; //if run hold function, longpress is true
+            },750, PupilID)}
+        function MouseUpName() {
+            clearTimeout(pressTimer); //clear time on mouseup
+        }
+          
         function onkey(e) {
             var keychar = String.fromCharCode(e.which);
             if (e.ctrlKey && keychar === 'Z') {
@@ -378,10 +445,10 @@
         }
         
         function PrintConduit() {
-            var box = $(this).closest('li');
-            box.addClass('print');
+            // var box = $(this).closest('li');
+            // box.addClass('print');
             window.print();
-            box.removeClass('print');
+            // box.removeClass('print');
         }
         
         // public methods:
@@ -421,13 +488,19 @@
             $('#teacher').change(function() {
                 TeacherChanged();
             });
+            
+            // Фильтр по школьнику
+            $('#pupil').change(function() {
+                PupilChanged();
+            });
            
             // Устанавливаем обработчики событий кондуита
             var $conduits = $('#conduits');
             // Для заголоков столбцов (в том числе в плавающих шапках)
             $conduits.on({'mouseover': MouseOverCol, 'mouseout': MouseUnselect}, '.conduit .problemName');
             // Для заголовков строк (имена школьников)
-            $conduits.on({'mouseover': MouseOverRow, 'mouseout': MouseUnselect}, '.conduit .pupilName');
+            $conduits.on({'mouseover': MouseOverRow, 'mouseout': MouseUnselect, 'dblclick': MouseDoubleClickName}, '.conduit .pupilName');
+            $conduits.on({'click': MouseClickName, 'mousedown': MouseDownName, 'mouseup': MouseUpName}, '.conduit .pupilName');
             // Для ячеек с отметками
             $conduits.on({'mouseover': MouseOverCell, 'mouseout': MouseUnselect, 'click': MouseClickCell}, '.conduit td');
             // Для кондуитов в целом
@@ -436,7 +509,7 @@
             $conduits.on({'click': MouseClickSploiler}, '.conduit_spoiler');
             // Печать
             $conduits.on({'click': PrintConduit}, '.printButton');
-            
+
             // Раскрываем те спойлеры, с которыми пользователь работал в прошлый раз.
             // Первым элементом в массиве opened выступает пустая строка. Её естественно пропускаем.
             var key = 'SPOILER:' + Globals.ClassID,
