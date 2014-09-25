@@ -11,15 +11,13 @@ $ConduitUser->must_manage('Marks');
     <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
     <link rel="icon" href="/favicon.ico" type="image/x-icon">
     
-    <title><?php echo $Class['Description'];?>: помощь</title>
+    <title><?php echo $Class['Description'];?>: справка</title>
     
     <!-- Все необходимые стили -->
     <style type="text/css">
     <?php
         echo "\n/* Navbar */\n";
         include('css/Navbar.min.css');
-        echo "\n/* Toolbar */\n";
-        include('css/Toolbar.min.css');
     ?>
     </style>
 </head>
@@ -38,9 +36,9 @@ $ConduitUser->must_manage('Marks');
 </p>
 <p>
 Вносить задачи крайне просто: нужно выбрать нужный листок, нужную дату (по умолчанию выбрана текущая дата) и нажать в нужную ячейку. 
-Для того, чтобы стереть отметку, нужно нажать на ячейку с зажатым alt. 
+Для того, чтобы стереть отметку, нужно нажать на ячейку с зажатым Alt.
 Либо предварительно сменить режим «Обычный ввод» на подходящее удаление.
-Ещё можно вносить диапазоны задач, если клинкуть с зажатым shift.
+Ещё можно вносить диапазоны задач, если кликнуть с зажатым Shift.
 Кроме дат можно вносить любые отметки, если их ввести вручную.
 </p>
 <p>
@@ -58,7 +56,7 @@ $ConduitUser->must_manage('Marks');
 Эксперименты можно начать с команды help.
 </p>
 <p>
-Кондуиты можно печатать, пока только из firefox.
+Кондуиты можно печатать, пока только из Firefox.
 Чтобы всё влезло, нужно убрать все колонтитулы, поставить поля 4мм с каждой стороны.
 Будут распечатаны те кондуиты, которые открыты в момент начала печати.
 </p>
@@ -71,6 +69,11 @@ $ConduitUser->must_manage('Marks');
 </p>
         </article>
     </section>
+    
+    <script type="text/javascript">
+        document.getElementById('Help').setAttribute('class', 'current');
+    </script>
+    
     <?php include('yandex.metrika.min.html'); ?>
 </body>
 </html>
