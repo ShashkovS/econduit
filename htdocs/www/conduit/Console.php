@@ -16,7 +16,7 @@ $ConduitUser->must_manage('Marks');
     <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
     <link rel="icon" href="/favicon.ico" type="image/x-icon">
     
-    <title><?php echo $Class['Description'];?>: статистика</title>
+    <title><?php echo $Class['Description'];?>: консоль</title>
     
     <!-- Подключаем jQuery -->
     <script type="text/javascript" src="http://yastatic.net/jquery/2.1.1/jquery.min.js"></script>
@@ -40,16 +40,11 @@ $ConduitUser->must_manage('Marks');
     <?php
         echo "\n/* Navbar */\n";
         include('css/Navbar.min.css');
-        echo "\n/* Toolbar */\n";
-        include('css/Toolbar.min.css');
         echo "\n/* Console */\n";
         include('css/Console.min.css');
     ?>
     </style>
 </head>
-
-
-
 <body>
     <header>
         <?php require('Navbar.inc.php'); ?>
@@ -64,10 +59,9 @@ $ConduitUser->must_manage('Marks');
         </article>
     </section>
     <script>
-        jQuery(function($, undefined) {
         <?php FillConsoleData($Class['ID']); ?> 
         Console.init(pupil_array, list_array, problem_array);
-        });
+        $('#Console').addClass('current');
     </script>
 
     <?php include('yandex.metrika.min.html'); ?>
