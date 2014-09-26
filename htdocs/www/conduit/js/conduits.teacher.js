@@ -263,16 +263,6 @@
             }
         }
 
-        function changeMarkType() {
-            var mode = 1 - $(this).attr('data-state');
-            $(this).attr('data-state', mode);
-            if (mode) { // Установлен режим селектора плюсов-минусов
-
-            } else {    // Установлен режим календаря
-
-            }
-        }
-
         function SetModeState (i) {
             $('#mode').attr('data-state', i).text([' Обычный ввод', ' Удалить один раз',  ' Удалять всегда'][i]);
         }
@@ -445,10 +435,7 @@
         }
 
         function PrintConduit() {
-            // var box = $(this).closest('li');
-            // box.addClass('print');
             window.print();
-            // box.removeClass('print');
         }
 
         // public methods:
@@ -470,8 +457,10 @@
             })
             .datepicker('setDate', today);
 
-            // Режим метки
-            $('#changeMarkType').click(changeMarkType);
+            // Показать/скрыть панель дополнительных кнопок
+            $('#togglePanel').click(function(){
+                $(this).attr('data-state', 1 - $(this).attr('data-state'));
+            });
 
             // Кнопка отмены
             $('#undoButton').click(Undo).attr('disabled', 'disabled');

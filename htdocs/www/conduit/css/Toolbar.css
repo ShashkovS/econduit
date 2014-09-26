@@ -16,24 +16,29 @@
     color: #AAA;
     cursor: auto;
 }
+.tool > * {
+    display: inline-block;
+}
 .tool button, .tool span {
     background-color: #E5E5E5;
     cursor: pointer;
     height: 100%;
-    display: inline-block;
+    text-align: center;
 }
 #mode {
     padding: 0 0.5em;    
 }
-#changeMarkType {
+#togglePanel {
     width: 1.6em;
-    text-align: center;
 }
-#changeMarkType[data-state="0"]:before {
+#togglePanel[data-state="0"]:before {
     content: "\1f4c5";
 }
-#changeMarkType[data-state="1"]:before {
+#togglePanel[data-state="1"]:before {
     content: "\b1";
+}
+#togglePanel[data-state="0"]+div {
+    display: none;
 }
 #mode[data-state="0"]:before {
     content: "\2714";
@@ -47,31 +52,8 @@
 option.current {
     font-weight: bold;
 }
-
-.select-editable { 
-    position: relative; 
-    background-color: white; 
-    display: inline-block;
-    width: 10em;
-    top: -1.4em;
-}
-.select-editable  * {
-    font-family: "Arial Unicode MS", FreeSans, sans-serif;
-}
-.select-editable select { 
-    position: absolute; 
-    top: 0px; 
-    left: 0px; 
-    width: 8em; 
-}
-.select-editable input { 
-    position: absolute; 
-    top: 1px; 
-    left: 1px; 
-    width: 6em; 
-    padding: 1px; 
-    border: none; 
-}
-.select-editable select:focus, .select-editable input:focus {
-    outline: none; 
+#markPanel button {
+    width: 1.6em;
+    padding: 0;
+    font-family: FreeSans, sans-serif;
 }
