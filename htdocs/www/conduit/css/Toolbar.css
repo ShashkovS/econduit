@@ -54,7 +54,6 @@ option.current {
     display: inline-block;
     width: 10em;
     top: -1.4em;
-    font-family: "Arial Unicode MS", FreeSans, sans-serif;
 }
 .select-editable  * {
     font-family: "Arial Unicode MS", FreeSans, sans-serif;
