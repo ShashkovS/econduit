@@ -48,30 +48,30 @@ option.current {
     font-weight: bold;
 }
 
-.select-editable { 
+.combobox { 
     position: relative; 
     background-color: white; 
     display: inline-block;
     width: 10em;
     top: -1.4em;
 }
-.select-editable  * {
+.combobox  * {
     font-family: "Arial Unicode MS", FreeSans, sans-serif;
 }
-.select-editable select { 
+.combobox select { 
     position: absolute; 
     top: 0px; 
     left: 0px; 
     width: 8em; 
 }
-.select-editable input { 
+.combobox input { 
     position: absolute; 
     top: 1px; 
     left: 1px; 
-    width: 6em; 
+    width: 6.5em; 
     padding: 1px; 
     border: none; 
 }
-.select-editable select:focus, .select-editable input:focus {
+.combobox select:focus, .combobox input:focus {
     outline: none; 
 }

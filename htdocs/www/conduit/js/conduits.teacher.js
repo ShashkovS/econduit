@@ -263,16 +263,6 @@
             }
         }
 
-        function changeMarkType() {
-            var mode = 1 - $(this).attr('data-state');
-            $(this).attr('data-state', mode);
-            if (mode) { // Установлен режим селектора плюсов-минусов
-
-            } else {    // Установлен режим календаря
-
-            }
-        }
-
         function SetModeState (i) {
             $('#mode').attr('data-state', i).text([' Обычный ввод', ' Удалить один раз',  ' Удалять всегда'][i]);
         }
@@ -470,9 +460,6 @@
             })
             .datepicker('setDate', today);
 
-            // Режим метки
-            $('#changeMarkType').click(changeMarkType);
-
             // Кнопка отмены
             $('#undoButton').click(Undo).attr('disabled', 'disabled');
 
@@ -481,6 +468,14 @@
                 SetModeState(($(this).attr('data-state')+1)%3);
             });
 
+            $('.combobox select').change(function(){
+                var input = this.nextElementSibling;
+                input.value = this.value;
+                $(input).change();
+                // Небольшой хак. Чтобы можно было повторно выбрать то же значение.
+                this.selectedIndex = -1;
+            }).prop('selectedIndex', -1);
+            
             // Обработчик клавиатуры
             $(window).keyup(onkey);
 
