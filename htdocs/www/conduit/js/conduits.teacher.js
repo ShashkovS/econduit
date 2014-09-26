@@ -432,6 +432,13 @@
             } else if (e.which === 27){     // Escape
                 QuitAreaMode();
             }
+            if (!$('#autoCaption').is(":focus")) {
+                // hotkeys
+                if (keychar >= '1' && keychar <= '8') {
+                    // быстрая метка
+                    $('.combobox select').prop('selectedIndex', keychar - 1).change();
+                }
+            }
         }
 
         function PrintConduit() {
