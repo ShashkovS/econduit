@@ -14,14 +14,10 @@ function send_mime_mail(
     $to = mime_header_encode($name_to, $data_charset, $send_charset) . ' <' . $email_to . '>';
     $subject = mime_header_encode($subject, $data_charset, $send_charset);
     $from =  mime_header_encode($name_from, $data_charset, $send_charset) . ' <' . $email_from . '>';
-    $bcc = mime_header_encode("Женя", $data_charset, $send_charset) . ' <' . "eugene57@yandex.ru" . '>';
     if($data_charset != $send_charset) {
         $body = iconv($data_charset, $send_charset, $body);
     }
     $headers = "From: $from\r\n";
-    if ($email_to != "eugene57@yandex.ru") {
-        $headers .= "Bcc: $bcc\r\n";
-    }
     $type = ($html) ? 'html' : 'plain';
     $headers .= "Content-type: text/$type; charset=$send_charset\r\n";
     $headers .= "Mime-Version: 1.0\r\n";

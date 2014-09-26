@@ -1,11 +1,11 @@
 // Адаптация jQuery.FloatHeader для целей кондуита
 (function(){
     $.fn.floatHeader = function() {
-        return this.each(function () {    
+        return this.each(function () {
             var self = $(this);
             self.floatBox = self.siblings('.floatHeader');
             var table = self.floatBox.children('table');
-            
+
             // bind to the scroll event
             $(window).scroll(function() {
                 if (showHeader(self, self.floatBox)) {
@@ -20,19 +20,19 @@
                     self.floatBox.hide();
                 }
             });
-            
+
             $(window).resize(function() {
                 if(self.floatBox.is(':visible')) {
                     recalculateColumnWidth(table, self);
                 }
             });
-            
+
             this.fhRecalculate = function() {
                 recalculateColumnWidth(table, self);
             };
         });
     }
-    
+
     // Recalculates the column widths of the floater.
     function recalculateColumnWidth(target, template) {
         var tableWidth = template.width();
@@ -46,7 +46,7 @@
             dst = dst.width($(element).width()).next();
         });
     }
-    
+
     // Determines if the element is visible
     function showHeader(element, floater) {
         if (!element.is(':visible') || !show_floating_header) {
@@ -63,15 +63,15 @@
     }
 
     function Conduit() {
-        
+
         // private properties:
         var AreaMode = false;
         var AreaCorner = {};
         var RequestStack = [];
-        
+
         // public properties:
         this.show_floating_header = true;
-        
+
         // private methods:
         function MouseOverCell() {
             if (AreaMode) {
@@ -134,7 +134,7 @@
                 // Запоминаем, что он закрыт
                 SaveSpoilerState(ClassID, ListID, false);
                 // Скрываем весь блок из печати
-                box.removeClass('print');                
+                box.removeClass('print');
             } else {
                 // Спойлер был закрыт
                 if ($(this).attr('data-state') === 'empty') {
@@ -173,7 +173,7 @@
                 box.addClass('print');
             }
         }
-        
+
         // Добавляем/удаляем в список открытых спойлеров (в localStorage) текущий
         function SaveSpoilerState(ClassID, ListID, isOpened) {
             var key = 'SPOILER:' + ClassID,
@@ -186,9 +186,9 @@
             }
             localStorage.setItem(key, opened.join(','));
         }
-        
+
         // ========================================= Teacher's features ========================================= //
-        
+
         // Добавление в массив Request запроса на обновление ещё одной ячейки
         function Add2Request(Request, $conduit, X, Y, Mark) {
             // Проверяем, что ячейка видима. В противном случае ничего не делаем.
@@ -197,7 +197,7 @@
                 Request.push({
                     Pupil:    $row.attr('data-pupil'),
                     Problem:  $conduit.find('.headerRow').eq(0).children().eq(X).attr('data-problem'),
-                    Mark:     Mark  
+                    Mark:     Mark
                 });
             }
         }
@@ -205,10 +205,10 @@
         // Отправка на сервер запроса на обновление значений набора ячеек.
         // Для варианта update запрос передаётся входным параметром; для варианта rollback подтягивается из стека запросов
         function SendRequest(Type, Request) {
-            if (Type === 'update') { 
+            if (Type === 'update') {
                 // Добавляем запрос в стек
                 RequestStack.push(Request);
-            } else {    
+            } else {
                 Request = RequestStack[RequestStack.length-1];
             }
             $.ajax({
@@ -254,7 +254,7 @@
                          }
            });
         }
-        
+
         // Откат последнего изменения
         function Undo() {
             if(RequestStack.length > 0) {
@@ -262,38 +262,38 @@
                 SendRequest('rollback');
             }
         }
-        
+
         function changeMarkType() {
             var mode = 1 - $(this).attr('data-state');
             $(this).attr('data-state', mode);
             if (mode) { // Установлен режим селектора плюсов-минусов
-            
+
             } else {    // Установлен режим календаря
-            
+
             }
         }
-        
+
         function SetModeState (i) {
             $('#mode').attr('data-state', i).text([' Обычный ввод', ' Удалить один раз',  ' Удалять всегда'][i]);
         }
-        
+
         function QuitAreaMode() {
             AreaMode = false;
             delete AreaCorner;
             MouseUnselect();
         }
-        
+
         function MouseClickCell(event) {
             // Координаты нажатия (реально область кондуита начинается с точки (1,0))
             var x = this.cellIndex;
             var y = $(this).parent()[0].sectionRowIndex;
-            
+
             var ListID = $(this).closest('.conduit_container').attr('data-id');
             var $conduit = $(this).closest('.conduit');
-            
+
             // Текущий запрос
             var Request = [];
-            
+
             // Метка, которая будет проставляться
             var Mark;
             if (event.altKey || +$('#mode').attr('data-state')) {
@@ -301,7 +301,7 @@
             } else {
                 Mark = $('#autoCaption').val(); // В обычном режиме проставляется текст из поля "Метка"
             }
-            
+
             if (AreaMode) {                     // Если уже было начато выделение области, то отсылаем метку по всем ячейкам
                 if (x < AreaCorner.x) {
                     var Left   = x;
@@ -336,17 +336,17 @@
                 // Отсылаем запрос на сервер. Он обновит данные в базе и вернёт новое содержимое ячеек.
                 SendRequest('update', Request);
             }
-            
+
             // Если был включён режим однократного удаления, сбрасываем его
             if ($('#mode').attr('data-state') == 1) {
                 SetModeState(0);
             }
         }
-        
+
 
         function AddHighlight($conduit_container) {
             $conduit_container = $conduit_container || $('#conduits');
-            
+
             var mark = $('#autoCaption').val();
             if (mark !== '') {
                 $conduit_container.find('.conduit td[data-mark="' + mark + '"]').addClass('highlighted');
@@ -356,16 +356,16 @@
         function RemoveHighlight() {
             $('.conduit td').removeClass('highlighted');
         }
-        
+
         function MarkChanged() {
             RemoveHighlight();
             AddHighlight();
-        }   
+        }
 
 
         function FilterPupils($conduit_container) {
             $conduit_container = $conduit_container || $('#conduits');
-            
+
             var Teacher = $('#teacher').val();
             var Pupil = $('#pupil').val();
             if (Pupil === '' && Teacher === '') {
@@ -395,7 +395,7 @@
             RequestStack = []; // Сбрасываем список отката
             $('#undoButton').attr('disabled', 'disabled');
         }
-        
+
         function PupilChanged($conduit_container) {
             $conduit_container = $conduit_container || $('#conduits');
             FilterPupils($conduit_container);
@@ -422,7 +422,7 @@
         function MouseClickName() {
             if(longpress) { // if detect hold, stop onclick function
                 return false;
-            };        
+            };
         }
         function MouseDownName() {
             var PupilID = $(this).closest('tr').attr('data-pupil');
@@ -434,7 +434,7 @@
         function MouseUpName() {
             clearTimeout(pressTimer); //clear time on mouseup
         }
-          
+
         function onkey(e) {
             var keychar = String.fromCharCode(e.which);
             if (e.ctrlKey && keychar === 'Z') {
@@ -443,24 +443,24 @@
                 QuitAreaMode();
             }
         }
-        
+
         function PrintConduit() {
             // var box = $(this).closest('li');
             // box.addClass('print');
             window.print();
             // box.removeClass('print');
         }
-        
+
         // public methods:
 
         this.init = function() {
-            
+
             // Метка
             $('#autoCaption').change(MarkChanged).keyup(MarkChanged);
 
             // Привязываем datepicker
             var today = $.fn.Today();
-            $('#autoCaption').datepicker({  
+            $('#autoCaption').datepicker({
                 constrainInput: false,
                 showButtonPanel: true,
                 showOtherMonths: true,
@@ -472,28 +472,28 @@
 
             // Режим метки
             $('#changeMarkType').click(changeMarkType);
-            
+
             // Кнопка отмены
             $('#undoButton').click(Undo).attr('disabled', 'disabled');
-            
+
             // Режим ввода
             $('#mode').click(function(){
                 SetModeState(($(this).attr('data-state')+1)%3);
             });
-            
+
             // Обработчик клавиатуры
             $(window).keyup(onkey);
-            
+
             // Фильтр по учителю
             $('#teacher').change(function() {
                 TeacherChanged();
             });
-            
+
             // Фильтр по школьнику
             $('#pupil').change(function() {
                 PupilChanged();
             });
-           
+
             // Устанавливаем обработчики событий кондуита
             var $conduits = $('#conduits');
             // Для заголоков столбцов (в том числе в плавающих шапках)
@@ -517,10 +517,10 @@
             for (var i = 1, l = opened.length; i < l; ++i) {
                 $('.conduit_spoiler[data-id='+opened[i]+']').click();
             }
-          
+
         }
     }
 
     window.Conduit = new Conduit();
-    
+
 })();
