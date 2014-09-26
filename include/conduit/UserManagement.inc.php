@@ -23,10 +23,10 @@ class ConduitUser {
     
     function phpBB_login() {
         global $user;   // пользователь phpBB
-		global $auth;   // модуль аутентификации phpBB
+        global $auth;   // модуль аутентификации phpBB
         
-		$user->session_begin();
-		$auth->acl($user->data);
+        $user->session_begin();
+        $auth->acl($user->data);
         //$user->setup();
         
         $this->name = $user->data['username'];
@@ -62,7 +62,7 @@ class ConduitUser {
             );
         } else {
             $this->display_name = $this->name;
-            $this->allow_management = array(                
+            $this->allow_management = array(
                 'Marks'   => 0,
                 'Lists'   => 0,
                 'Classes' => 0,

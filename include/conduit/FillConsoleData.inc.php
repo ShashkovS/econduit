@@ -70,16 +70,16 @@ function FillConsoleData($ClassID) {
     $started = False;
     foreach ($Problems as $Problem) {
         if ($prev_list !== $Problem['ListID']) {
-	    	if ($started) {
-	    		$html = substr($html, 0, -2) . '],'. PHP_EOL . '    ';
-	    	} else {
-	    		$started = True;
-	    	}
-        	$html .= 'l' . $Problem['ListID'] . ':[';
+            if ($started) {
+                $html = substr($html, 0, -2) . '],'. PHP_EOL . '    ';
+            } else {
+                $started = True;
+            }
+            $html .= 'l' . $Problem['ListID'] . ':[';
         }
         $name = '0' . $Problem['Name'];
         if (is_numeric(substr($name, -1))) {
-        	$name = $name . '_';
+            $name = $name . '_';
         }
         $html .= '{ID:"' . $Problem['ID'] . '", Search:"' . $name . '", Name:"' . $Problem['Name'] .  '"}, ';
         $prev_list = $Problem['ListID'];
