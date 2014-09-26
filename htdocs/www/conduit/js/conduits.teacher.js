@@ -435,10 +435,7 @@
         }
 
         function PrintConduit() {
-            // var box = $(this).closest('li');
-            // box.addClass('print');
             window.print();
-            // box.removeClass('print');
         }
 
         // public methods:
@@ -469,9 +466,8 @@
             });
 
             $('.combobox select').change(function(){
-                var input = this.nextElementSibling;
-                input.value = this.value;
-                $(input).change();
+                // Копируем выбранное значение в метку
+                $(this.nextElementSibling).val(this.value).change();
                 // Небольшой хак. Чтобы можно было повторно выбрать то же значение.
                 this.selectedIndex = -1;
             }).prop('selectedIndex', -1);
@@ -480,14 +476,10 @@
             $(window).keyup(onkey);
 
             // Фильтр по учителю
-            $('#teacher').change(function() {
-                TeacherChanged();
-            });
+            $('#teacher').change(TeacherChanged);
 
             // Фильтр по школьнику
-            $('#pupil').change(function() {
-                PupilChanged();
-            });
+            $('#pupil').change(PupilChanged);
 
             // Устанавливаем обработчики событий кондуита
             var $conduits = $('#conduits');
