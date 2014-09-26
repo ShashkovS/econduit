@@ -56,7 +56,7 @@ option.current {
     top: -1.4em;
 }
 .combobox  * {
-    font-family: "Arial Unicode MS", FreeSans, sans-serif;
+    font-family: FreeSans, sans-serif;
 }
 .combobox select { 
     position: absolute; 
