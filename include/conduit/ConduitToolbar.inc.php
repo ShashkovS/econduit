@@ -14,15 +14,15 @@ require_once('FillPupilsList.inc.php');
                 <li class="tool">
                     <label for="autoCaption">Метка:</label>
                     <div class="combobox">
-                        <select> <!-- You have a bug in the implementation: If you choose the 115x175 mm from the list, then insert manually some text - 12222 - then try to choose again 115x175 mm - nothing will happen - this is due to the fact that the list wasn't changed although the input was changed. -->
-                            <option value="+">+</option>
-                            <option value="+.">+.</option>
-                            <option value="&#177;">&#177;</option>
-                            <option value="+/2">+/2</option>
-                            <option value="&#8723;">&#8723;</option>
-                            <option value="&#8722;.">&#8722;.</option>
-                            <option value="&#8722;">&#8722;</option>
-                            <option value="0">0</option>
+                        <select>
+                            <option value="+">(1) +</option>
+                            <option value="+.">(2) +.</option>
+                            <option value="&#177;">(3) &#177;</option>
+                            <option value="+/2">(4) +/2</option>
+                            <option value="&#8723;">(5) &#8723;</option>
+                            <option value="&#8722;.">(6) &#8722;.</option>
+                            <option value="&#8722;">(7) &#8722;</option>
+                            <option value="0">(8) 0</option>
                         </select>
                         <input id="autoCaption" type="text" maxlength=10 />
                     </div>
