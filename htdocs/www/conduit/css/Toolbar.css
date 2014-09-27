@@ -1,7 +1,9 @@
+.bar  * {
+    font-family: Marks, Verdana, sans-serif;    
+}
 .bar {
     background: #cadceb;
     padding: 0 10px;
-    font-family: Verdana,Helvetica,Arial,sans-serif;
     font-size: 10px;
     margin-bottom: 0.2em;
 }
@@ -55,9 +57,9 @@ option.current {
     width: 10em;
     top: -1.4em;
 }
-.combobox  * {
-    font-family: FreeSans, sans-serif;
-}
+/*.combobox  * {
+    font-family: Marks, Verdana, sans-serif;
+}*/
 .combobox select { 
     position: absolute; 
     top: 0px; 
