@@ -27,16 +27,6 @@
 #mode {
     padding: 0 0.5em;    
 }
-#changeMarkType {
-    width: 1.6em;
-    text-align: center;
-}
-#changeMarkType[data-state="0"]:before {
-    content: "\1f4c5";
-}
-#changeMarkType[data-state="1"]:before {
-    content: "\b1";
-}
 #mode[data-state="0"]:before {
     content: "\2714";
 }
@@ -57,9 +47,6 @@ option.current {
     width: 10em;
     top: -1.4em;
 }
-/*.combobox  * {
-    font-family: Marks, Verdana, sans-serif;
-}*/
 .combobox select { 
     position: absolute; 
     top: 0px; 
