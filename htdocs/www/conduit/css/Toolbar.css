@@ -10,7 +10,6 @@
 .tool {
     display: inline-block;
     font-size: 1.1em;
-    line-height: 2.2em;
     margin-right: 5px;
     width: auto;
 }
@@ -19,13 +18,14 @@
     cursor: auto;
 }
 .tool button, .tool span {
-    background-color: #E5E5E5;
+    background-color: #e5e5e5;
     cursor: pointer;
     height: 100%;
     display: inline-block;
 }
 #mode {
-    padding: 0 0.5em;    
+    padding: 0.3em 0.3em 0.1em;
+    border: 2px outset #e5e5e5;
 }
 #mode[data-state="0"]:before {
     content: "\2714";
@@ -39,7 +39,6 @@
 option.current {
     font-weight: bold;
 }
-
 .combobox { 
     position: relative; 
     background-color: white; 

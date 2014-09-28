@@ -264,7 +264,7 @@
         }
 
         function SetModeState (i) {
-            $('#mode').attr('data-state', i).text([' Обычный ввод', ' Удалить один раз',  ' Удалять всегда'][i]);
+            $('#mode').attr('data-state', i).text(['Обычный ввод', 'Удалить один раз',  'Удалять всегда'][i]);
         }
 
         function QuitAreaMode() {
