@@ -28,7 +28,7 @@ require_once('FillPupilsList.inc.php');
                     </div>
                 </li><!--
                 --><li class="tool">
-                    <span id="mode" data-state=0 title="Режим ввода">Обычный ввод</span>
+                    <button id="mode" data-state=0 title="Режим ввода">Обычный ввод</button>
                 </li><!--
                 --><li class="tool">
                     <button id="undoButton" type="button" title="Отмена последнего действия">Отменить</button>

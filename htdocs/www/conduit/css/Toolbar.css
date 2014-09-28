@@ -24,8 +24,7 @@
     display: inline-block;
 }
 #mode {
-    padding: 0.3em 0.3em 0.1em;
-    border: 2px outset #e5e5e5;
+    padding-left: 0;
 }
 #mode[data-state="0"]:before {
     content: "\2714";
@@ -43,8 +42,8 @@ option.current {
     position: relative; 
     background-color: white; 
     display: inline-block;
-    width: 10em;
-    top: -1.4em;
+    width: 9.7em;
+    top: -1.5em;
 }
 .combobox select { 
     position: absolute; 
