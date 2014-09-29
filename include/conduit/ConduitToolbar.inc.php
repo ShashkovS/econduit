@@ -27,6 +27,7 @@ require_once('FillPupilsList.inc.php');
                         <input id="autoCaption" type="text" maxlength=10 />
                     </div>
                 </li><!--
+                --><li class="strut">&nbsp;</li><!--
                 --><li class="tool">
                     <button id="mode" data-state=0 title="Режим ввода">Обычный ввод</button>
                 </li><!--
