@@ -64,7 +64,10 @@ $ConduitUser->must_manage('Marks');
         $('#Console').addClass('current');
     </script>
 
-    <?php include('yandex.metrika.min.html'); ?>
+<?php 
+    // Яндекс.Метрика
+    echo $Settings['page_metrics'];
+?>
 </body>
 </html>
 

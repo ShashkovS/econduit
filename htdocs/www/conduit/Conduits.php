@@ -84,6 +84,9 @@ require_once('GetClass.inc.php');
         Conduit.init();
         $('#Conduits').addClass('current');
     </script>
-    <?php include('yandex.metrika.min.html'); ?>
+<?php 
+    // Яндекс.Метрика
+    echo $Settings['page_metrics'];
+?>
 </body>
 </html>

@@ -90,5 +90,9 @@ $ConduitUser->must_manage('Lists');
         $('#UploadManager').addClass('current');
     </script>
 
+<?php 
+    // Яндекс.Метрика
+    echo $Settings['page_metrics'];
+?>
 </body>
 </html>
