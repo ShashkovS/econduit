@@ -89,16 +89,17 @@ class ConduitUser {
     
     // Ссылка на выход. Или на вход, если пользователь --- гость.
     function login_logout_link() {
-        global $phpbb_forum_link;
+        global $Settings;
         global $user;
+        $forum_link = $Settings['forum_absolute_link'];
         
         $redirect = explode('?', $_SERVER['REQUEST_URI'], 2);
         $redirect = $redirect[0];
         
         if ($user->data['is_registered']) {
-            return '<a title="Выход [ ' . $this->name . ' ]" href="' . $phpbb_forum_link . 'ucp.php?mode=logout&amp;sid=' . $user->session_id . '&amp;redirect=' . $redirect . '">Выход [ ' . $this->name . ' ]</a>';
+            return "<a title=\"Выход [ {$this->name} ]\" href=\"{$forum_link}ucp.php?mode=logout&amp;sid={$user->session_id}&amp;redirect={$redirect}\">Выход [ {$this->name} ]</a>";
         } else {
-            return '<a title="Вход" href="' . $phpbb_forum_link . 'ucp.php?mode=login&amp;redirect=' . $redirect . '">Вход</a>';
+            return "<a title=\"Вход\" href=\"{$forum_link}ucp.php?mode=login&amp;redirect={$redirect}\">Вход</a>";
         }
     }
 }

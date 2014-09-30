@@ -5,14 +5,12 @@ if (!defined('IN_CONDUIT') || !defined('IN_PHPBB')){
     exit();
 }
 
+// Всякие настройки
+require_once('Settings.inc.php');
 
-$phpbb_root_path = (defined('PHPBB_ROOT_PATH')) ? PHPBB_ROOT_PATH : '/home/host1333511/econduit.ru/htdocs/www/forum/';
+$phpbb_root_path = (defined('PHPBB_ROOT_PATH')) ? PHPBB_ROOT_PATH : $Settings['forum_absolute_path'];
 $phpEx = 'php';
 include_once($phpbb_root_path . 'common.' . $phpEx);
-
-$phpbb_forum_link = 'http://econduit.ru/forum/';
-$conduit_webroot = '/conduit';
-
 
 // Параметры SQL-соединения
 define('SQL', true);
@@ -32,6 +30,6 @@ $conduit_db = new PDO(
 unset($credentials);
 
 // Часовой пояс
-date_default_timezone_set('Europe/Moscow');
+date_default_timezone_set($Settings['timezone']);
 
 ?>
