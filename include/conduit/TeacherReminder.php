@@ -109,6 +109,7 @@ function check_teacher($User, $Name, $Email) {
 function write_to_teacher($FullName, $Email) {
     global $Class;
     global $Log;
+    global $Settings;
      
     $Log .= "write_to_teacher: необходимо напомнить: $FullName, $Email.<br/>"; 
      
@@ -118,13 +119,13 @@ function write_to_teacher($FullName, $Email) {
     
     // Собираем заголовки
     $to = array($FullName, $Email);
-    $from = array("Электронный кондуит", "reminder@econduit.ru");
+    $from = array("Электронный кондуит", $Settings['teacher_reminder_email']);
     $subject = "Напоминание";
 
     // Собираем тело
     $greeting = "$FirstName, привет!";
     $body = "<p>Сложнейший эвристический анализ выявил положительную вероятность того, что ты забыл$gender заполнить электронный кондуит :(</p>" . 
-            "<p>Но ещё не поздно! Как и ранее, кондуит доступен по адресу <a href=\"http://econduit.ru/conduit/$Class/\">http://econduit.ru/conduit/$Class/</a>.</p>";
+            "<p>Но ещё не поздно! Как и ранее, кондуит доступен по адресу <a href=\"{$Settings['conduit_absolute_link']}{$Class}/\">{$Settings['conduit_absolute_link']}{$Class}/</a>.</p>";
     $signature = "Данное сообщение сформировано автоматически и не требует ответа";
     $message = "$greeting<br/><br/>$body<br/><br/>$signature";
 
