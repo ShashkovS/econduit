@@ -13,7 +13,7 @@ if (!defined('IN_CONDUIT')){
             </ul>
             
             <ul class="linklist leftside">
-                <li id="Forum"><a title="Форум" href="<?php echo $phpbb_forum_link;?>">Форум</a></li>
+                <li id="Forum"><a title="Форум" href="<?php echo $Settings['forum_absolute_link'];?>">Форум</a></li>
                 <li id="Conduits"><a title="Кондуиты" href="./">Кондуиты</a></li>
 <?php if ($ConduitUser->may_manage('Lists') || $ConduitUser->may_manage('Classes')) { ?>
                 <li id="UploadManager"><a title="Загрузка данных" href="UploadManager.php">Загрузка данных</a></li>
