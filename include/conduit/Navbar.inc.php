@@ -5,6 +5,8 @@ if (!defined('IN_CONDUIT')){
     exit();
 }
 
+global $Settings;
+
 ?>
         <nav class="navbar">
 
