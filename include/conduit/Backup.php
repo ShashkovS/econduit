@@ -5,10 +5,8 @@ define('IN_CONDUIT', true);
 function dump_db($filename, $credentials, &$work_log) {
     $work_log .= "Starting database dump: {$credentials['db']}\n";
     
-    $mysqldump_error = shell_exec("mysqldump --user={$credentials['login']} --password={$credentials['password']} {$credentials['db']} 2>tmp.err | gzip --best --force > \"$filename\" && cat tmp.err && rm tmp.err");
-
-    // По идее есть версия без временного файла, но она почему-то падает с ошибкой парсинга (sh: -c: line 0: syntax error near unexpected token `>')
-    // $mysqldump_error = shell_exec("mysqldump --user={$credentials['login']} --password={$credentials['password']} {$credentials['db']} 2>&1 > >(gzip --best --force > $filename)");
+    //$mysqldump_error = shell_exec("mysqldump --user={$credentials['login']} --password={$credentials['password']} {$credentials['db']} 2>tmp.err | gzip --best --force > \"$filename\" && cat tmp.err && rm tmp.err");
+    $mysqldump_error = shell_exec("/bin/bash <<< \"mysqldump --user={$credentials['login']} --password=wrong {$credentials['db']} 2>&1 > >(gzip --best --force > \\\"$filename\\\")\"");
     
     // Проверяем успешность дампа
     if ($mysqldump_error === "") {
