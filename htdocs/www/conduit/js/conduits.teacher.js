@@ -423,6 +423,8 @@
 
         function onkey(e) {
             var keychar = String.fromCharCode(e.which);
+            //alert(e.which)
+            //alert(keychar)
             if (e.ctrlKey && keychar === 'Z') {
                 Undo();
             } else if (e.which === 27){     // Escape
@@ -433,6 +435,10 @@
                 if (keychar >= '1' && keychar <= '8') {
                     // быстрая метка
                     $('.combobox select').prop('selectedIndex', keychar - 1).change();
+                }
+                if (e.which >= 97 && e.which <= 104) {
+                    // быстрая метка на дополнительной клавиатуре
+                    $('.combobox select').prop('selectedIndex', e.which - 97).change();
                 }
             }
         }
