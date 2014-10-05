@@ -264,7 +264,7 @@
         }
 
         function SetModeState (i) {
-            $('#mode').attr('data-state', i).text([' Обычный ввод', ' Удалить один раз',  ' Удалять всегда'][i]);
+            $('#mode').attr('data-state', i).text(['Обычный ввод', 'Удалить один раз',  'Удалять всегда'][i]);
         }
 
         function QuitAreaMode() {
@@ -378,31 +378,27 @@
             }
         }
 
-        function TeacherChanged($conduit_container) {
-            $conduit_container = $conduit_container || $('#conduits');
+        function TeacherChanged() {
             $('#pupil').val(''); // Сбрасываем выбор конкретного школьника
-            FilterPupils($conduit_container);
-            RequestStack = []; // Сбрасываем список отката
+            FilterPupils();
+            RequestStack.length = 0; // Сбрасываем список отката
             $('#undoButton').attr('disabled', 'disabled');
         }
 
-        function PupilChanged($conduit_container) {
-            $conduit_container = $conduit_container || $('#conduits');
-            FilterPupils($conduit_container);
-            RequestStack = []; // Сбрасываем список отката
+        function PupilChanged() {
+            FilterPupils();
+            RequestStack.length = 0; // Сбрасываем список отката
             $('#undoButton').attr('disabled', 'disabled');
         }
 
         function SelectPupil($PupilID) {
-            var Pupil = $('#pupil').val();
-            if (Pupil === $PupilID) { // Данный школьник и так уже выбран
-                $('#pupil').val('');
-            } else {
-                $('#pupil').val($PupilID);
+            if ($PupilID === $('#pupil').val()) { // Данный школьник и так уже выбран
+                $PupilID = '';
             }
-            var $conduit_container = $('#conduits');
-            FilterPupils($conduit_container)
+            $('#pupil').val($PupilID);
+            FilterPupils();
         }
+        
         // Пользователь дважды кликнул по ФИО ученика
         function MouseDoubleClickName() {
             var PupilID = $(this).closest('tr').attr('data-pupil');
@@ -427,18 +423,28 @@
 
         function onkey(e) {
             var keychar = String.fromCharCode(e.which);
+            //alert(e.which)
+            //alert(keychar)
             if (e.ctrlKey && keychar === 'Z') {
                 Undo();
             } else if (e.which === 27){     // Escape
                 QuitAreaMode();
             }
+            if (!$('#autoCaption').is(":focus")) {
+                // hotkeys
+                if (keychar >= '1' && keychar <= '8') {
+                    // быстрая метка
+                    $('.combobox select').prop('selectedIndex', keychar - 1).change();
+                }
+                if (e.which >= 97 && e.which <= 104) {
+                    // быстрая метка на дополнительной клавиатуре
+                    $('.combobox select').prop('selectedIndex', e.which - 97).change();
+                }
+            }
         }
 
         function PrintConduit() {
-            // var box = $(this).closest('li');
-            // box.addClass('print');
             window.print();
-            // box.removeClass('print');
         }
 
         // public methods:
@@ -468,18 +474,21 @@
                 SetModeState(($(this).attr('data-state')+1)%3);
             });
 
+            $('.combobox select').change(function(){
+                // Копируем выбранное значение в метку
+                $(this.nextElementSibling).val(this.value).change();
+                // Небольшой хак. Чтобы можно было повторно выбрать то же значение.
+                this.selectedIndex = -1;
+            }).prop('selectedIndex', -1);
+            
             // Обработчик клавиатуры
             $(window).keyup(onkey);
 
             // Фильтр по учителю
-            $('#teacher').change(function() {
-                TeacherChanged();
-            });
+            $('#teacher').change(TeacherChanged);
 
             // Фильтр по школьнику
-            $('#pupil').change(function() {
-                PupilChanged();
-            });
+            $('#pupil').change(PupilChanged);
 
             // Устанавливаем обработчики событий кондуита
             var $conduits = $('#conduits');
