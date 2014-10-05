@@ -378,31 +378,27 @@
             }
         }
 
-        function TeacherChanged($conduit_container) {
-            $conduit_container = $conduit_container || $('#conduits');
+        function TeacherChanged() {
             $('#pupil').val(''); // Сбрасываем выбор конкретного школьника
-            FilterPupils($conduit_container);
-            RequestStack = []; // Сбрасываем список отката
+            FilterPupils();
+            RequestStack.length = 0; // Сбрасываем список отката
             $('#undoButton').attr('disabled', 'disabled');
         }
 
-        function PupilChanged($conduit_container) {
-            $conduit_container = $conduit_container || $('#conduits');
-            FilterPupils($conduit_container);
-            RequestStack = []; // Сбрасываем список отката
+        function PupilChanged() {
+            FilterPupils();
+            RequestStack.length = 0; // Сбрасываем список отката
             $('#undoButton').attr('disabled', 'disabled');
         }
 
         function SelectPupil($PupilID) {
-            var Pupil = $('#pupil').val();
-            if (Pupil === $PupilID) { // Данный школьник и так уже выбран
-                $('#pupil').val('');
-            } else {
-                $('#pupil').val($PupilID);
+            if ($PupilID === $('#pupil').val()) { // Данный школьник и так уже выбран
+                $PupilID = '';
             }
-            var $conduit_container = $('#conduits');
-            FilterPupils($conduit_container)
+            $('#pupil').val($PupilID);
+            FilterPupils();
         }
+        
         // Пользователь дважды кликнул по ФИО ученика
         function MouseDoubleClickName() {
             var PupilID = $(this).closest('tr').attr('data-pupil');

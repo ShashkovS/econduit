@@ -33,7 +33,7 @@
 /* Форматирование имён школьников */
 .pupilName, .printButton{
     text-align: left;
-    padding: 0.15em 0.4em 0.15em 0.25em;
+    padding: 0.5em 0.4em 0.2em 0.2em;
     white-space: nowrap;
 }
 
