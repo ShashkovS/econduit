@@ -22,7 +22,7 @@ require_once('FillPupilsList.inc.php');
                             <option value="&#8723;">(5) -+</option>
                             <option value="&#10794;">(6) -.</option>
                             <option value="&#8722;">(7) -</option>
-                            <option value="&#2205;">(8) 0</option>
+                            <option value="0">(8) 0</option>
                         </select>
                         <input id="autoCaption" type="text" maxlength=10 />
                     </div>
