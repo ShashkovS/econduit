@@ -16,13 +16,13 @@ require_once('FillPupilsList.inc.php');
                     <div class="combobox">
                         <select>
                             <option value="+">(1) +</option>
-                            <option value="&#10789;">(2) &#10789;</option>
-                            <option value="&#177;">(3) &#177;</option>
-                            <option value="&#10791;">(4) &#10791;</option>
-                            <option value="&#8723;">(5) &#8723;</option>
-                            <option value="&#10794;">(6) &#10794;</option>
-                            <option value="&#8722;">(7) &#8722;</option>
-                            <option value="0">(8) 0</option>
+                            <option value="&#10789;">(2) +.</option>
+                            <option value="&#177;">(3) +-</option>
+                            <option value="&#10791;">(4) +/2</option>
+                            <option value="&#8723;">(5) -+</option>
+                            <option value="&#10794;">(6) -.</option>
+                            <option value="&#8722;">(7) -</option>
+                            <option value="&#2205;">(8) 0</option>
                         </select>
                         <input id="autoCaption" type="text" maxlength=10 />
                     </div>
