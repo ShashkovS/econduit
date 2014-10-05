@@ -78,6 +78,10 @@ $ConduitUser->must_manage('Marks');
         $('#Stats').addClass('current');
     </script>
     
+<?php 
+    // Яндекс.Метрика
+    echo $Settings['page_metrics'];
+?>
 </body>
 </html>
 

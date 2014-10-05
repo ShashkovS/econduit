@@ -74,7 +74,10 @@ $ConduitUser->must_manage('Marks');
         document.getElementById('Help').setAttribute('class', 'current');
     </script>
     
-    <?php include('yandex.metrika.min.html'); ?>
+<?php 
+    // Яндекс.Метрика
+    echo $Settings['page_metrics'];
+?>
 </body>
 </html>
 

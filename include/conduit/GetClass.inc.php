@@ -12,9 +12,9 @@ require_once('Connect.inc.php');
 // Пример: $_SERVER['REQUEST_URI'] = '/conduit/d17/Conduits.php'
 
 function GetClass() {
-    global $conduit_db, $conduit_webroot;
+    global $conduit_db, $Settings;
 
-    if (preg_match("@^$conduit_webroot/(.*?)/@i", $_SERVER['REQUEST_URI'], $matches)) {
+    if (preg_match("@^/{$Settings['conduit_relative']}(.*?)/@i", $_SERVER['REQUEST_URI'], $matches)) {
         $ClassName = $matches[1];
         // Определяем класс по его названию
         $stmt = $conduit_db->prepare('SELECT `ID`, `Description` FROM `PClass` WHERE `ID` = ? LIMIT 1');
