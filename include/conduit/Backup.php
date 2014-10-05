@@ -6,10 +6,10 @@ function dump_db($filename, $credentials, &$work_log) {
     $work_log .= "Starting database dump: {$credentials['db']}\n";
     
     //$mysqldump_error = shell_exec("mysqldump --user={$credentials['login']} --password={$credentials['password']} {$credentials['db']} 2>tmp.err | gzip --best --force > \"$filename\" && cat tmp.err && rm tmp.err");
-    $mysqldump_error = shell_exec("/bin/bash <<< \"mysqldump --user={$credentials['login']} --password={$credentials['password']} {$credentials['db']} 2>&1 > >(gzip --best --force > \\\"$filename\\\")\"");
+    $mysqldump_error = shell_exec("/bin/bash <<< \"mysqldump --user={$credentials['login']} --password={$credentials['password']} --default-character-set=utf8 {$credentials['db']} 2>&1 > >(gzip --best --force > \\\"$filename\\\")\"");
     
     // Проверяем успешность дампа
-    if ($mysqldump_error === "") {
+    if (empty($mysqldump_error)) {
         $work_log .= "DB successfully dumped.\n";
         return true;
     } else {
