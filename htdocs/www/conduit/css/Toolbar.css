@@ -1,5 +1,5 @@
-.bar  * {
-    font-family: Marks, Verdana, sans-serif;    
+.bar * {
+    font-family: Marks, Verdana, sans-serif;
 }
 .bar {
     background: #cadceb;
@@ -46,7 +46,7 @@ option.current {
     background-color: white; 
     display: inline-block;
     width: 10.2em;
-    top: -1.5em;
+    top: -1.2em;
 }
 .combobox select { 
     position: absolute; 

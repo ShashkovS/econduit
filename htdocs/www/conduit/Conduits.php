@@ -31,7 +31,7 @@ require_once('GetClass.inc.php');
         include("js/MathML.min.js");
         echo "\n/* Conduit */\n";
         if ($ConduitUser->may_manage('Marks')) {
-            include("js/conduits.teacher.js");
+            include("js/conduits.teacher.min.js");
         } else {
             include("js/conduits.pupil.min.js");
         }
@@ -50,7 +50,7 @@ require_once('GetClass.inc.php');
         echo "\n/* Navbar */\n";
         include('css/Navbar.min.css');
         echo "\n/* Toolbar */\n";
-        include('css/Toolbar.css');
+        include('css/Toolbar.min.css');
         echo "\n/* Datepicker */\n";
         include('css/jquery-ui.datepicker.min.css');
 ?>
