@@ -400,7 +400,7 @@ if __name__ == '__main__':
         try:
             outfile = open(options.outfile, 'w', encoding=options.charset)
         except Exception:
-            parser.error("Could not outfile")
+            parser.error("Could not open outfile")
 
     try:
         min_css = compress(css_data, int(options.linebreakpos))
