@@ -22,4 +22,6 @@ $Settings['teacher_reminder_email'] = 'reminder@econduit.ru';
 $Settings['timezone']               = 'Europe/Moscow';
 $Settings['page_metrics']           = '';
 
+$Settings['tmp_backup_storage']     = '/home/host1333511/econduit.ru/backups/';
+
 ?>
