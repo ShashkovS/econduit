@@ -73,3 +73,13 @@
     text-decoration: underline;
     font-size: 120%;
 }
+
+/* gif'ка загрузки */
+.loading {
+    background-image: url(data:image/gif;base64,R0lGODlhAQADAIABALr7/////yH/C05FVFNDQVBFMi4wAwEAAAAh+QQJFAABACwAAAAAAQADAAACAkRSACH5BAkUAAEALAAAAAABAAMAAAICDFIAIfkEBRQAAQAsAAAAAAEAAwAAAgJMUAA7); 
+    background-size: 25% auto;
+}
+.loading_error {
+    background-image: url(data:image/gif;base64,R0lGODlhAwABAIABAP+/v////yH/C05FVFNDQVBFMi4wAwEAAAAh+QQJHgABACwAAAAAAwABAAACAkxQACH5BAkeAAEALAAAAAADAAEAAAICDFIAIfkEBR4AAQAsAAAAAAMAAQAAAgJEUgA7); 
+    background-size: auto 10%;
+}
