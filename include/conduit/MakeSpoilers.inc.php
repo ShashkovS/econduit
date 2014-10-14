@@ -1,10 +1,10 @@
 <?php
 
 if (!defined('IN_CONDUIT')){
-    // Попытка прямого доступа к файлу
-    exit();
+    exit(0);
 }
 require_once('Connect.inc.php');
+require_once('FillConduit.inc.php');
 
 ?>
 <?php
@@ -25,7 +25,7 @@ function compareList(&$a, &$b) {
 
 // Формируем список спойлеров с кондуитам внутри.
 // В списке присутствуют кондуиты всех листков данного класса, упорядоченные от самых последних к самым старым.
-function fillConduits($ClassID) {
+function makeSpoilers($ClassID) {
     global $conduit_db;
     
     // Формируем список доступных листков на основе таблицы PList
@@ -48,14 +48,28 @@ function fillConduits($ClassID) {
     // Сортируем листки интеллектуально
     usort($List, 'compareList');
     
+    // Определяем, какие из спойлеров должны быть открыты
+    if (isset($_COOKIE['ec_open'])) {
+        $opened_spoilers = explode(',', $_COOKIE['ec_open']);
+    } else {
+        $opened_spoilers = array();
+    }
+    
     // Формируем html-код
     foreach ($List as $Entry) {
+        if (in_array($Entry['ID'], $opened_spoilers)) {
+            $conduit = fillConduit($ClassID, $Entry['ID']);
+            $state   = 'opened';
+        } else {
+            $conduit = '';
+            $state   = 'empty';
+        }
         echo(
 <<<SPOILER
         <li>
-            <span class="conduit_spoiler" data-id="${Entry['ID']}" data-state="empty">${Entry['Text']}</span>
-            <div class="conduit_container" data-id="${Entry['ID']}"></div>
-            <p class="loading">Ждите. Производится загрузка данных с сервера&hellip;</p>
+            <span class="conduit_spoiler" data-id="${Entry['ID']}" data-state="$state">${Entry['Text']}</span>
+            <div class="conduit_container" data-id="${Entry['ID']}">$conduit</div>
+            <p class="loading" style="display: none;">Ждите. Производится загрузка данных с сервера&hellip;</p>
         </li>
 
 SPOILER

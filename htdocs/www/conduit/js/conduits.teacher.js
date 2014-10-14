@@ -146,7 +146,7 @@
                     // Запрашиваем содержимое кондуита
                     $.ajax({
                         type:   'POST',
-                        url:    'ajax/FillConduit.php',
+                        url:    'ajax/GetConduit.php',
                         data:   {List: ListID},
                         dataType: 'html',
                         success: function(response){
@@ -174,17 +174,17 @@
             }
         }
 
-        // Добавляем/удаляем в список открытых спойлеров (в localStorage) текущий
+        // Добавляем/удаляем в список открытых спойлеров (в куках) текущий
         function SaveSpoilerState(ClassID, ListID, isOpened) {
-            var key = 'SPOILER:' + ClassID,
-                opened = (localStorage.getItem(key) || '').split(','),
+            var key = 'ec_open',
+                opened = ($.cookie(key) || '').split(','),
                 pos = $.inArray(ListID, opened);
             if (isOpened && (pos == -1)) {
                 opened.push(ListID);
             } else if (!isOpened && (pos != -1)) {
-                opened.splice(pos,1);
+                opened.splice(pos, 1);
             }
-            localStorage.setItem(key, opened.join(','));
+            $.cookie(key, opened.join(','), {expires: 30});
         }
 
         // ========================================= Teacher's features ========================================= //
@@ -505,14 +505,6 @@
             $conduits.on({'click': MouseClickSploiler}, '.conduit_spoiler');
             // Печать
             $conduits.on({'click': PrintConduit}, '.printButton');
-
-            // Раскрываем те спойлеры, с которыми пользователь работал в прошлый раз.
-            // Первым элементом в массиве opened выступает пустая строка. Её естественно пропускаем.
-            var key = 'SPOILER:' + Globals.ClassID,
-                opened = (localStorage.getItem(key) || '').split(',');
-            for (var i = 1, l = opened.length; i < l; ++i) {
-                $('.conduit_spoiler[data-id='+opened[i]+']').click();
-            }
 
         }
     }

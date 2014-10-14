@@ -4,7 +4,7 @@ define('IN_CONDUIT', true);
 define('IN_PHPBB', true);
 
 require_once('UserManagement.inc.php');
-require_once('FillConduits.inc.php');
+require_once('MakeSpoilers.inc.php');
 require_once('GetClass.inc.php');
 
 ?>
@@ -27,6 +27,8 @@ require_once('GetClass.inc.php');
         include("js/jquery-ui.datepicker.min.js");
         include("js/jquery-ui.datepicker.ru.min.js");
         include("js/jquery-ui.datepicker.hacks.min.js");
+        echo "\n/* Cookie */\n";
+        include("js/jquery.cookie.min.js");
         echo "\n/* MathML */\n";
         include("js/MathML.min.js");
         echo "\n/* Conduit */\n";
@@ -73,7 +75,7 @@ require_once('GetClass.inc.php');
     </header>
 
     <ul id="conduits">
-<?php fillConduits($Class['ID']); ?>
+<?php makeSpoilers($Class['ID']); ?>
     </ul>
     
     <script type="text/javascript">
