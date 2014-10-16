@@ -66,12 +66,11 @@ function makeSpoilers($ClassID) {
         }
         echo(
 <<<SPOILER
-        <li>
-            <span class="conduit_spoiler" data-id="${Entry['ID']}" data-state="$state">${Entry['Text']}</span>
-            <div class="conduit_container" data-id="${Entry['ID']}">$conduit</div>
+        <li class="conduit_container" data-id="${Entry['ID']}" data-state="$state">
+            <span class="conduit_spoiler">${Entry['Text']}</span>
             <p class="loading" style="display: none;">Ждите. Производится загрузка данных с сервера&hellip;</p>
+            $conduit
         </li>
-
 SPOILER
         );
     }

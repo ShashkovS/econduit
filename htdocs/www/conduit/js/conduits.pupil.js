@@ -88,19 +88,19 @@
         // Пользователь кликнул по спойлеру
         function MouseClickSploiler() {
             var ClassID = Globals.ClassID,
-                ListID = $(this).attr('data-id');
-            if ($(this).attr('data-state') === 'opened') {
+                $conduit_container = $(this).closest('.conduit_container'),
+                ListID = $conduit_container.attr('data-id');
+            if ($conduit_container.attr('data-state') === 'opened') {
                 // Спойлер уже открыт
                 // Закрываем его
-                $(this).attr('data-state', 'closed');
+                $conduit_container.attr('data-state', 'closed');
                 // Запоминаем, что он закрыт
                 SaveSpoilerState(ClassID, ListID, false);
             } else {
                 // Спойлер был закрыт
-                if ($(this).attr('data-state') === 'empty') {
+                if ($conduit_container.attr('data-state') === 'empty') {
                     // Этот кондуит до сих пор не запрашивался
-                    var $conduit_container = $(this).siblings('.conduit_container'),
-                        $loading = $(this).siblings('.loading');
+                    var $loading = $conduit_container.children('.loading');
                     // Показываем заставку пока ждём ответа от сервера
                     $loading.show();
                     // Запрашиваем содержимое кондуита
@@ -113,7 +113,7 @@
                                     // Прячем заставку
                                     $loading.hide();
                                     // Вставляем таблицу на место
-                                    $conduit_container.html(response);
+                                    $conduit_container.append(response);
                                     // Приделываем к ней плавающую шапку
                                     $conduit_container.children('.conduit').floatHeader();
                                  },
@@ -122,7 +122,7 @@
                                  }
                     });
                 }
-                $(this).attr('data-state', 'opened');
+                $conduit_container.attr('data-state', 'opened');
                 // Запоминаем, что он открыт
                 SaveSpoilerState(ClassID, ListID, true);
             }

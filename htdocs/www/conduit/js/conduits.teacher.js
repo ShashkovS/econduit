@@ -125,35 +125,32 @@
         // Пользователь кликнул по спойлеру
         function MouseClickSploiler() {
             var ClassID = Globals.ClassID,
-                ListID = $(this).attr('data-id'),
-                box = $(this).closest('li');
-            if ($(this).attr('data-state') === 'opened') {
+                $conduit_container = $(this).closest('.conduit_container'),
+                ListID = $conduit_container.attr('data-id');
+            if ($conduit_container.attr('data-state') === 'opened') {
                 // Спойлер уже открыт
-                // Закрываем его
-                $(this).attr('data-state', 'closed');
+                // Закрываем его и скрываем из печати
+                $conduit_container.attr('data-state', 'closed').removeClass('print');
                 // Запоминаем, что он закрыт
                 SaveSpoilerState(ClassID, ListID, false);
-                // Скрываем весь блок из печати
-                box.removeClass('print');
             } else {
                 // Спойлер был закрыт
-                if ($(this).attr('data-state') === 'empty') {
+                if ($conduit_container.attr('data-state') === 'empty') {
                     // Этот кондуит до сих пор не запрашивался
-                    var $conduit_container = $(this).siblings('.conduit_container'),
-                        $loading = $(this).siblings('.loading');
+                    var $loading = $conduit_container.children('.loading');
                     // Показываем заставку пока ждём ответа от сервера
                     $loading.show();
                     // Запрашиваем содержимое кондуита
                     $.ajax({
                         type:   'POST',
                         url:    'ajax/GetConduit.php',
-                        data:   {List: ListID},
+                        data:   {Class: ClassID, List: ListID},
                         dataType: 'html',
                         success: function(response){
                                     // Прячем заставку
                                     $loading.hide();
                                     // Вставляем таблицу на место
-                                    $conduit_container.html(response);
+                                    $conduit_container.append(response);
                                     // Приделываем к ней плавающую шапку
                                     $conduit_container.children('.conduit').floatHeader();
                                     // Добавляем подсветку сегодняшних меток
@@ -166,11 +163,9 @@
                                  }
                     });
                 }
-                $(this).attr('data-state', 'opened');
+                $conduit_container.attr('data-state', 'opened').addClass('print');
                 // Запоминаем, что он открыт
                 SaveSpoilerState(ClassID, ListID, true);
-                // Добавляем этот блок в область печати
-                box.addClass('print');
             }
         }
 
@@ -360,13 +355,13 @@
             var Pupil = $('#pupil').val();
             if (Pupil === '' && Teacher === '') {
                 $('#conduits').find('.conduit tfoot').show();
-                this.show_floating_header = true
+                this.show_floating_header = true;
             } else {
                 $('#conduits').find('.conduit tfoot').hide();
-                this.show_floating_header = false
+                this.show_floating_header = false;
             }
-            if (Pupil === '') { // `All` selected
-                if (Teacher === '') { // `All` selected
+            if (Pupil === '') {         // `All` selected
+                if (Teacher === '') {   // `All` selected
                     $conduit_container.find('.conduit tbody tr').show();
                 } else {
                     $conduit_container.find('.conduit tbody tr:not([data-teacher="' + Teacher + '"])').hide();
@@ -506,6 +501,8 @@
             // Печать
             $conduits.on({'click': PrintConduit}, '.printButton');
 
+            // Добавляем подсветку текущих меток
+            AddHighlight();
         }
     }
 

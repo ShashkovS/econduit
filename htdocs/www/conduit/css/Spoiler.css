@@ -6,10 +6,10 @@
     display: inline-block;
 }
 
-.conduit_spoiler:not([data-state="opened"]) {
+.conduit_container:not([data-state="opened"]) .conduit_spoiler {
     color: grey;
 }
 
-.conduit_spoiler:not([data-state="opened"]) ~ * {
+.conduit_container:not([data-state="opened"]) :not(.conduit_spoiler) {
     display:none;
 }
