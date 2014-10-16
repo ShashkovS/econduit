@@ -1,67 +1,66 @@
-// Адаптация jQuery.FloatHeader для целей кондуита
-(function(){
-    $.fn.floatHeader = function() {
-        return this.each(function () {  
-            var self = $(this);
-            self.floatBox = self.siblings('.floatHeader');
-            var table = self.floatBox.children('table');
-            
-            // bind to the scroll event
-            $(window).scroll(function() {
-                if (showHeader(self, self.floatBox)) {
-                    if (!self.floatBox.is(':visible')) {
-                        recalculateColumnWidth(table, self);
-                    }
-                    self.floatBox.show().css({
-                        'top' : 0,
-                        'left': self.offset().left-$(window).scrollLeft()
-                    });
-                } else {
-                    self.floatBox.hide();
-                }
-            });
-            
-            $(window).resize(function() {
-                if(self.floatBox.is(':visible')) {
-                    recalculateColumnWidth(table, self);
-                }
-            });
-        });
-    }
-    
-    // Recalculates the column widths of the floater.
-    function recalculateColumnWidth(target, template) {
-        var tableWidth = template.width();
-        if (navigator.userAgent.indexOf("Firefox") > -1 && tableWidth < window.innerWidth) {
-            target.css('width','');
-        } else {
-            target.width(tableWidth);
-        }
-        var dst = target.find('thead th:first-child');
-        template.find('th').each(function(index, element) {
-            dst = dst.width($(element).width()).next();
-        });
-    }
-    
-    // Determines if the element is visible
-    function showHeader(element, floater) {
-        if (!element.is(':visible')) {
-            return false;
-        }
-        var top = $(window).scrollTop();
-        var y0 = element.offset().top;
-        var height = element.height() - floater.height();
-        var foot = element.children('tfoot');
-        if (foot.length > 0) {
-            height -= foot.height();
-        }
-        return y0 <= top && top <= y0 + height;
-    }
-})();
-
 (function() {
     function Conduit() {
+
+        // Адаптация jQuery.FloatHeader для целей кондуита
+        $.fn.floatHeader = function() {
+            return this.each(function () {  
+                var self = $(this);
+                self.floatBox = self.siblings('.floatHeader');
+                var table = self.floatBox.children('table');
+                
+                // bind to the scroll event
+                $(window).scroll(function() {
+                    if (showHeader(self, self.floatBox)) {
+                        if (!self.floatBox.is(':visible')) {
+                            recalculateColumnWidth(table, self);
+                        }
+                        self.floatBox.show().css({
+                            'top' : 0,
+                            'left': self.offset().left-$(window).scrollLeft()
+                        });
+                    } else {
+                        self.floatBox.hide();
+                    }
+                });
+                
+                $(window).resize(function() {
+                    if(self.floatBox.is(':visible')) {
+                        recalculateColumnWidth(table, self);
+                    }
+                });
+            });
+        }
         
+        // Recalculates the column widths of the floater.
+        function recalculateColumnWidth(target, template) {
+            var tableWidth = template.width();
+            if (navigator.userAgent.indexOf("Firefox") > -1 && tableWidth < window.innerWidth) {
+                target.css('width','');
+            } else {
+                target.width(tableWidth);
+            }
+            var dst = target.find('thead th:first-child');
+            template.find('th').each(function(index, element) {
+                dst = dst.width($(element).width()).next();
+            });
+        }
+        
+        // Determines if the element is visible
+        function showHeader(element, floater) {
+            if (!element.is(':visible')) {
+                return false;
+            }
+            var top = $(window).scrollTop();
+            var y0 = element.offset().top;
+            var height = element.height() - floater.height();
+            var foot = element.children('tfoot');
+            if (foot.length > 0) {
+                height -= foot.height();
+            }
+            return y0 <= top && top <= y0 + height;
+        }
+
+    
         // private methods:
         function MouseOverCell() {
             // Подсвечиваем заголовок строки и саму ячейку
@@ -155,6 +154,9 @@
             $conduits.on({'mouseover': MouseOverCell, 'mouseout': MouseUnselect}, '.conduit td');
             // Для спойлеров
             $conduits.on({'click': MouseClickSploiler}, '.conduit_spoiler');
+            
+            // Инициализируем плавающие шапки для предзагруженных кондуитов
+            $('.conduit_container>.conduit').floatHeader();
         }
         
     }

@@ -1,66 +1,4 @@
-// Адаптация jQuery.FloatHeader для целей кондуита
 (function(){
-    $.fn.floatHeader = function() {
-        return this.each(function () {
-            var self = $(this);
-            self.floatBox = self.siblings('.floatHeader');
-            var table = self.floatBox.children('table');
-
-            // bind to the scroll event
-            $(window).scroll(function() {
-                if (showHeader(self, self.floatBox)) {
-                    if (!self.floatBox.is(':visible')) {
-                        recalculateColumnWidth(table, self);
-                    }
-                    self.floatBox.show().css({
-                        'top' : 0,
-                        'left': self.offset().left-$(window).scrollLeft()
-                    });
-                } else {
-                    self.floatBox.hide();
-                }
-            });
-
-            $(window).resize(function() {
-                if(self.floatBox.is(':visible')) {
-                    recalculateColumnWidth(table, self);
-                }
-            });
-
-            this.fhRecalculate = function() {
-                recalculateColumnWidth(table, self);
-            };
-        });
-    }
-
-    // Recalculates the column widths of the floater.
-    function recalculateColumnWidth(target, template) {
-        var tableWidth = template.width();
-        if (navigator.userAgent.indexOf("Firefox") > -1 && tableWidth < window.innerWidth) {
-            target.css('width','');
-        } else {
-            target.width(tableWidth);
-        }
-        var dst = target.find('thead th:first-child');
-        template.find('th').each(function(index, element) {
-            dst = dst.width($(element).width()).next();
-        });
-    }
-
-    // Determines if the element is visible
-    function showHeader(element, floater) {
-        if (!element.is(':visible') || !show_floating_header) {
-            return false;
-        }
-        var top = $(window).scrollTop();
-        var y0 = element.offset().top;
-        var height = element.height() - floater.height();
-        var foot = element.children('tfoot');
-        if (foot.length > 0) {
-            height -= foot.height();
-        }
-        return y0 <= top && top <= y0 + height;
-    }
 
     function Conduit() {
 
@@ -68,9 +6,70 @@
         var AreaMode = false;
         var AreaCorner = {};
         var RequestStack = [];
+        var ShowFloatingHeader = true;
 
-        // public properties:
-        this.show_floating_header = true;
+        // Адаптация jQuery.FloatHeader для целей кондуита
+        $.fn.floatHeader = function() {
+            return this.each(function () {
+                var self = $(this);
+                self.floatBox = self.siblings('.floatHeader');
+                var table = self.floatBox.children('table');
+
+                // bind to the scroll event
+                $(window).scroll(function() {
+                    if (showHeader(self, self.floatBox)) {
+                        if (!self.floatBox.is(':visible')) {
+                            recalculateColumnWidth(table, self);
+                        }
+                        self.floatBox.show().css({
+                            'top' : 0,
+                            'left': self.offset().left-$(window).scrollLeft()
+                        });
+                    } else {
+                        self.floatBox.hide();
+                    }
+                });
+
+                $(window).resize(function() {
+                    if(self.floatBox.is(':visible')) {
+                        recalculateColumnWidth(table, self);
+                    }
+                });
+
+                this.fhRecalculate = function() {
+                    recalculateColumnWidth(table, self);
+                };
+            });
+        }
+
+        // Recalculates the column widths of the floater.
+        function recalculateColumnWidth(target, template) {
+            var tableWidth = template.width();
+            if (navigator.userAgent.indexOf("Firefox") > -1 && tableWidth < window.innerWidth) {
+                target.css('width','');
+            } else {
+                target.width(tableWidth);
+            }
+            var dst = target.find('thead th:first-child');
+            template.find('th').each(function(index, element) {
+                dst = dst.width($(element).width()).next();
+            });
+        }
+
+        // Determines if the element is visible
+        function showHeader(element, floater) {
+            if (!element.is(':visible') || !ShowFloatingHeader) {
+                return false;
+            }
+            var top = $(window).scrollTop();
+            var y0 = element.offset().top;
+            var height = element.height() - floater.height();
+            var foot = element.children('tfoot');
+            if (foot.length > 0) {
+                height -= foot.height();
+            }
+            return y0 <= top && top <= y0 + height;
+        }
 
         // private methods:
         function MouseOverCell() {
@@ -211,7 +210,7 @@
                 url:    'ajax/UpdateMark.php',
                 data:   {Request: JSON.stringify(Request), Type: Type},
                 dataType: 'json',
-                context: $('.conduit_container[data-id="' + Request.List + '"]>.conduit').eq(0),
+                context: $('.conduit_container[data-id="' + Request.List + '"]>.conduit'),
                 success: function(Response){
                             for(var i = 0, l = Response.length; i < l; i++) {
                                 var x = this.find('.headerRow').eq(0).children('[data-problem="'+Response[i].Problem+'"]')[0].cellIndex;
@@ -355,10 +354,10 @@
             var Pupil = $('#pupil').val();
             if (Pupil === '' && Teacher === '') {
                 $('#conduits').find('.conduit tfoot').show();
-                this.show_floating_header = true;
+                ShowFloatingHeader = true;
             } else {
                 $('#conduits').find('.conduit tfoot').hide();
-                this.show_floating_header = false;
+                ShowFloatingHeader = false;
             }
             if (Pupil === '') {         // `All` selected
                 if (Teacher === '') {   // `All` selected
@@ -393,7 +392,7 @@
             $('#pupil').val($PupilID);
             FilterPupils();
         }
-        
+
         // Пользователь дважды кликнул по ФИО ученика
         function MouseDoubleClickName() {
             var PupilID = $(this).closest('tr').attr('data-pupil');
@@ -475,7 +474,7 @@
                 // Небольшой хак. Чтобы можно было повторно выбрать то же значение.
                 this.selectedIndex = -1;
             }).prop('selectedIndex', -1);
-            
+
             // Обработчик клавиатуры
             $(window).keyup(onkey);
 
@@ -503,6 +502,9 @@
 
             // Добавляем подсветку текущих меток
             AddHighlight();
+
+            // Инициализируем плавающие шапки для предзагруженных кондуитов
+            $('.conduit_container>.conduit').floatHeader();
         }
     }
 
