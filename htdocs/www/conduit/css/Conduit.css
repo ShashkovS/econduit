@@ -10,10 +10,14 @@
     cursor: default;
     -webkit-user-select: none; 
     -moz-user-select: none;
-    font-family: Marks, "Helvetica Narrow", "Arial Narrow", sans-serif;
+    font-family: "Helvetica Narrow", "Arial Narrow", sans-serif;
 }
 .conduit th, .conduit td {
     border: thin solid;
+}
+
+.conduit td {
+    font-family: Marks, "Helvetica Narrow", "Arial Narrow", sans-serif;
 }
 
 /* Двойная граница между задачами */
@@ -64,8 +68,8 @@
     padding: 0 10px;
 }
 
-.conduit_container {
-    margin-bottom: 2em;
+.conduit_container[data-state="opened"] {
+    margin-bottom: 1em;
 }
 
 .printButton {
