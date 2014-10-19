@@ -1,66 +1,4 @@
-// Адаптация jQuery.FloatHeader для целей кондуита
 (function(){
-    $.fn.floatHeader = function() {
-        return this.each(function () {
-            var self = $(this);
-            self.floatBox = self.siblings('.floatHeader');
-            var table = self.floatBox.children('table');
-
-            // bind to the scroll event
-            $(window).scroll(function() {
-                if (showHeader(self, self.floatBox)) {
-                    if (!self.floatBox.is(':visible')) {
-                        recalculateColumnWidth(table, self);
-                    }
-                    self.floatBox.show().css({
-                        'top' : 0,
-                        'left': self.offset().left-$(window).scrollLeft()
-                    });
-                } else {
-                    self.floatBox.hide();
-                }
-            });
-
-            $(window).resize(function() {
-                if(self.floatBox.is(':visible')) {
-                    recalculateColumnWidth(table, self);
-                }
-            });
-
-            this.fhRecalculate = function() {
-                recalculateColumnWidth(table, self);
-            };
-        });
-    }
-
-    // Recalculates the column widths of the floater.
-    function recalculateColumnWidth(target, template) {
-        var tableWidth = template.width();
-        if (navigator.userAgent.indexOf("Firefox") > -1 && tableWidth < window.innerWidth) {
-            target.css('width','');
-        } else {
-            target.width(tableWidth);
-        }
-        var dst = target.find('thead th:first-child');
-        template.find('th').each(function(index, element) {
-            dst = dst.width($(element).width()).next();
-        });
-    }
-
-    // Determines if the element is visible
-    function showHeader(element, floater) {
-        if (!element.is(':visible') || !show_floating_header) {
-            return false;
-        }
-        var top = $(window).scrollTop();
-        var y0 = element.offset().top;
-        var height = element.height() - floater.height();
-        var foot = element.children('tfoot');
-        if (foot.length > 0) {
-            height -= foot.height();
-        }
-        return y0 <= top && top <= y0 + height;
-    }
 
     function Conduit() {
 
@@ -68,9 +6,70 @@
         var AreaMode = false;
         var AreaCorner = {};
         var RequestStack = [];
+        var ShowFloatingHeader = true;
 
-        // public properties:
-        this.show_floating_header = true;
+        // Адаптация jQuery.FloatHeader для целей кондуита
+        $.fn.floatHeader = function() {
+            return this.each(function () {
+                var self = $(this);
+                self.floatBox = self.siblings('.floatHeader');
+                var table = self.floatBox.children('table');
+
+                // bind to the scroll event
+                $(window).scroll(function() {
+                    if (showHeader(self, self.floatBox)) {
+                        if (!self.floatBox.is(':visible')) {
+                            recalculateColumnWidth(table, self);
+                        }
+                        self.floatBox.show().css({
+                            'top' : 0,
+                            'left': self.offset().left-$(window).scrollLeft()
+                        });
+                    } else {
+                        self.floatBox.hide();
+                    }
+                });
+
+                $(window).resize(function() {
+                    if(self.floatBox.is(':visible')) {
+                        recalculateColumnWidth(table, self);
+                    }
+                });
+
+                this.fhRecalculate = function() {
+                    recalculateColumnWidth(table, self);
+                };
+            });
+        }
+
+        // Recalculates the column widths of the floater.
+        function recalculateColumnWidth(target, template) {
+            var tableWidth = template.width();
+            if (navigator.userAgent.indexOf("Firefox") > -1 && tableWidth < window.innerWidth) {
+                target.css('width','');
+            } else {
+                target.width(tableWidth);
+            }
+            var dst = target.find('thead th:first-child');
+            template.find('th').each(function(index, element) {
+                dst = dst.width($(element).width()).next();
+            });
+        }
+
+        // Determines if the element is visible
+        function showHeader(element, floater) {
+            if (!element.is(':visible') || !ShowFloatingHeader) {
+                return false;
+            }
+            var top = $(window).scrollTop();
+            var y0 = element.offset().top;
+            var height = element.height() - floater.height();
+            var foot = element.children('tfoot');
+            if (foot.length > 0) {
+                height -= foot.height();
+            }
+            return y0 <= top && top <= y0 + height;
+        }
 
         // private methods:
         function MouseOverCell() {
@@ -125,35 +124,32 @@
         // Пользователь кликнул по спойлеру
         function MouseClickSploiler() {
             var ClassID = Globals.ClassID,
-                ListID = $(this).attr('data-id'),
-                box = $(this).closest('li');
-            if ($(this).attr('data-state') === 'opened') {
+                $conduit_container = $(this).closest('.conduit_container'),
+                ListID = $conduit_container.attr('data-id');
+            if ($conduit_container.attr('data-state') === 'opened') {
                 // Спойлер уже открыт
-                // Закрываем его
-                $(this).attr('data-state', 'closed');
+                // Закрываем его и скрываем из печати
+                $conduit_container.attr('data-state', 'closed').removeClass('print');
                 // Запоминаем, что он закрыт
                 SaveSpoilerState(ClassID, ListID, false);
-                // Скрываем весь блок из печати
-                box.removeClass('print');
             } else {
                 // Спойлер был закрыт
-                if ($(this).attr('data-state') === 'empty') {
+                if ($conduit_container.attr('data-state') === 'empty') {
                     // Этот кондуит до сих пор не запрашивался
-                    var $conduit_container = $(this).siblings('.conduit_container'),
-                        $loading = $(this).siblings('.loading');
+                    var $loading = $conduit_container.children('.loading');
                     // Показываем заставку пока ждём ответа от сервера
                     $loading.show();
                     // Запрашиваем содержимое кондуита
                     $.ajax({
                         type:   'POST',
-                        url:    'ajax/FillConduit.php',
-                        data:   {List: ListID},
+                        url:    'ajax/GetConduit.php',
+                        data:   {Class: ClassID, List: ListID},
                         dataType: 'html',
                         success: function(response){
                                     // Прячем заставку
                                     $loading.hide();
                                     // Вставляем таблицу на место
-                                    $conduit_container.html(response);
+                                    $conduit_container.append(response);
                                     // Приделываем к ней плавающую шапку
                                     $conduit_container.children('.conduit').floatHeader();
                                     // Добавляем подсветку сегодняшних меток
@@ -166,25 +162,23 @@
                                  }
                     });
                 }
-                $(this).attr('data-state', 'opened');
+                $conduit_container.attr('data-state', 'opened').addClass('print');
                 // Запоминаем, что он открыт
                 SaveSpoilerState(ClassID, ListID, true);
-                // Добавляем этот блок в область печати
-                box.addClass('print');
             }
         }
 
-        // Добавляем/удаляем в список открытых спойлеров (в localStorage) текущий
+        // Добавляем/удаляем в список открытых спойлеров (в куках) текущий
         function SaveSpoilerState(ClassID, ListID, isOpened) {
-            var key = 'SPOILER:' + ClassID,
-                opened = (localStorage.getItem(key) || '').split(','),
+            var key = 'ec_open',
+                opened = ($.cookie(key) || '').split(','),
                 pos = $.inArray(ListID, opened);
             if (isOpened && (pos == -1)) {
                 opened.push(ListID);
             } else if (!isOpened && (pos != -1)) {
-                opened.splice(pos,1);
+                opened.splice(pos, 1);
             }
-            localStorage.setItem(key, opened.join(','));
+            $.cookie(key, opened.join(','), {expires: 30});
         }
 
         // ========================================= Teacher's features ========================================= //
@@ -219,7 +213,7 @@
                 url:    'ajax/UpdateMark.php',
                 data:   {Request: JSON.stringify(Request), Type: Type},
                 dataType: 'json',
-                context: $('.conduit_container[data-id="' + Request.List + '"]>.conduit').eq(0),
+                context: $('.conduit_container[data-id="' + Request.List + '"]>.conduit'),
                 success: function(Response){
                             for(var i = 0, l = Response.length; i < l; i++) {
                                 var x = this.find('.headerRow').eq(0).children('[data-problem="'+Response[i].Problem+'"]')[0].cellIndex;
@@ -374,13 +368,13 @@
             var Pupil = $('#pupil').val();
             if (Pupil === '' && Teacher === '') {
                 $('#conduits').find('.conduit tfoot').show();
-                this.show_floating_header = true
+                ShowFloatingHeader = true;
             } else {
                 $('#conduits').find('.conduit tfoot').hide();
-                this.show_floating_header = false
+                ShowFloatingHeader = false;
             }
-            if (Pupil === '') { // `All` selected
-                if (Teacher === '') { // `All` selected
+            if (Pupil === '') {         // `All` selected
+                if (Teacher === '') {   // `All` selected
                     $conduit_container.find('.conduit tbody tr').show();
                 } else {
                     $conduit_container.find('.conduit tbody tr:not([data-teacher="' + Teacher + '"])').hide();
@@ -412,7 +406,7 @@
             $('#pupil').val($PupilID);
             FilterPupils();
         }
-        
+
         // Пользователь дважды кликнул по ФИО ученика
         function MouseDoubleClickName() {
             var PupilID = $(this).closest('tr').attr('data-pupil');
@@ -494,7 +488,7 @@
                 // Небольшой хак. Чтобы можно было повторно выбрать то же значение.
                 this.selectedIndex = -1;
             }).prop('selectedIndex', -1);
-            
+
             // Обработчик клавиатуры
             $(window).keyup(onkey);
 
@@ -520,14 +514,14 @@
             // Печать
             $conduits.on({'click': PrintConduit}, '.printButton');
 
-            // Раскрываем те спойлеры, с которыми пользователь работал в прошлый раз.
-            // Первым элементом в массиве opened выступает пустая строка. Её естественно пропускаем.
-            var key = 'SPOILER:' + Globals.ClassID,
-                opened = (localStorage.getItem(key) || '').split(',');
-            for (var i = 1, l = opened.length; i < l; ++i) {
-                $('.conduit_spoiler[data-id='+opened[i]+']').click();
-            }
+            // Добавляем подсветку текущих меток
+            AddHighlight();
 
+            // Инициализируем плавающие шапки для предзагруженных кондуитов
+            $('.conduit_container>.conduit').floatHeader();
+            
+            // Применяем фильтрацию для предзагруженных кондуитов
+            FilterPupils();
         }
     }
 

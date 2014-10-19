@@ -1,11 +1,10 @@
 <?php
 
-define('IN_CONDUIT', true);
-define('IN_PHPBB', true);
-define('AJAX', true);
-require_once('UserManagement.inc.php');
+if (!defined('IN_CONDUIT')){
+    exit(0);
+}
+require_once('Connect.inc.php');
 require_once('RenderCell.inc.php');
-require_once('AjaxError.inc.php');
 
 ?>
 <?php
@@ -144,13 +143,7 @@ function fillConduit($ClassID, $ListID) {
     $FloatTable = "<table class=\"conduit\">$ColGroup<thead>$hRow</thead></table>";
     $FloatDiv = "<div class=\"floatHeader\" style=\"display:none;\">$FloatTable</div>";
     
-    echo $Table . $FloatDiv;
-}
-
-try {
-    fillConduit($Class['ID'], $_POST['List']);
-} catch (Exception $e) {
-    triggerAjaxError(404);
+    return $Table . $FloatDiv;
 }
 
 ?>
