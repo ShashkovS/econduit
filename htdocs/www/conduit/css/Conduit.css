@@ -79,7 +79,7 @@
 }
 
 /* gif'ка загрузки */
-.loading {
+.loading_mark {
     background-image: url(data:image/gif;base64,R0lGODlhAQADAIABALr7/////yH/C05FVFNDQVBFMi4wAwEAAAAh+QQJFAABACwAAAAAAQADAAACAkRSACH5BAkUAAEALAAAAAABAAMAAAICDFIAIfkEBRQAAQAsAAAAAAEAAwAAAgJMUAA7); 
     background-size: 25% auto;
 }

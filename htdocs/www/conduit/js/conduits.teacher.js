@@ -195,7 +195,7 @@
                 });
                 var $Cell = $row.children().eq(X);
                 $Cell.removeClass('loading_error');
-                $Cell.addClass('loading');
+                $Cell.addClass('loading_mark');
             }
         }
 
@@ -219,7 +219,7 @@
                                 var x = this.find('.headerRow').eq(0).children('[data-problem="'+Response[i].Problem+'"]')[0].cellIndex;
                                 var $Cell = this.find('tr[data-pupil="'+Response[i].Pupil+'"]').children().eq(x);
                                 $Cell.html(Response[i].Text);
-                                $Cell.removeClass('loading');
+                                $Cell.removeClass('loading_mark');
                                 if (typeof(Response[i].Hint) !== 'undefined'){
                                     $Cell.attr({
                                         'data-mark' : Response[i].Mark,
@@ -253,15 +253,17 @@
         function MarkLoadingError(Request) {
             return function(jqXHR, textStatus, errorThrown) {
                       var msg = 'Не удалось обновить данные на сервере: ';
+                      var cur_Request = Request.slice()
                       alert(msg + jqXHR.status + ' ' + textStatus);
-                      for (var i = 0, l = Request.length; i < l; ++i) {
-                          var x = this.find('.headerRow').eq(0).children('[data-problem="'+Request[i].Problem+'"]')[0].cellIndex;
-                          var $Cell = this.find('tr[data-pupil="'+Request[i].Pupil+'"]').children().eq(x);
-                          $Cell.removeClass('loading');
+                      for (var i = 0, l = cur_Request.length; i < l; ++i) {
+                          var x = this.find('.headerRow').eq(0).children('[data-problem="'+cur_Request[i].Problem+'"]')[0].cellIndex;
+                          var $Cell = this.find('tr[data-pupil="'+cur_Request[i].Pupil+'"]').children().eq(x);
+                          $Cell.removeClass('loading_mark');
                           $Cell.addClass('loading_error');
                       }
                    };
         }
+
 
         // Откат последнего изменения
         function Undo() {
