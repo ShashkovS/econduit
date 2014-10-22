@@ -20,7 +20,7 @@ def compress(from_file, to_file, encoding='utf-8'):
     last_dot = from_file.rfind('.')
     if last_dot == -1:
         return False
-    ext = from_file[last_dot:].lower()
+    ext = from_file[last_dot + 1:].lower()
 
     # unknown extension => nothing to do
     if ext not in COMPRESS_FUNC:
