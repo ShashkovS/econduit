@@ -6,21 +6,13 @@ define('IN_PHPBB', true);
 require_once('Connect.inc.php'); 
 require_once('SendMail.inc.php'); 
 
-//if (isset($__GET['class'])) {
-//    $Class = $__GET['class'];
-//} else {
-//    exit();
-//}
-
-$Class = 'd17';
-
 $Log = "";
 // Проверяем, что сегодня рабочий день
 // Для этого должны одновременно выполняться два условия:
 //      1. Правильный день недели
 //      2. За этот день уже внесена хотя бы одна задача --- чтобы не надоедать всем в каникулы.
-function work_day() {
-    global $conduit_db, $Class;
+function work_day($Class) {
+    global $conduit_db;
     global $Log;
     
     // Проверяем день недели
@@ -61,8 +53,8 @@ function work_day() {
 //      1. Есть задачи, внесённые непосредственно им.
 //      2. У его школьников в сумме внесено хотя бы N задач --- либо он вносил под чужим профайлом, либо его не было на уроке и кто-то подменял.
 define('N', 7);
-function check_teacher($User, $Name, $Email) {
-    global $conduit_db, $Class;
+function check_teacher($Class, $User, $Name, $Email) {
+    global $conduit_db;
     global $Log;
     
     $Log .= "check_teacher: Проверка учителя $User ($Name, $Email).<br/>";
@@ -102,11 +94,10 @@ function check_teacher($User, $Name, $Email) {
     }
     
     // Всё-таки надо напомнить
-    write_to_teacher($Name, $Email);
+    write_to_teacher($Class, $Name, $Email);
 }
 
-function write_to_teacher($FullName, $Email) {
-    global $Class;
+function write_to_teacher($Class, $FullName, $Email) {
     global $Log;
     global $Settings;
      
@@ -134,12 +125,12 @@ function write_to_teacher($FullName, $Email) {
     
 }
 
-function write_to_all_teachers() {
-    global $conduit_db, $Class;
+function write_to_all_teachers($Class) {
+    global $conduit_db;
     global $Log;
     
     // Вначале определяем, учебный ли сегодня день
-    if (!work_day()) {
+    if (!work_day($Class)) {
         $Log .= "write_to_all_teachers: День не рабочий.<br/>";
         return;
     }
@@ -163,13 +154,28 @@ function write_to_all_teachers() {
     $stmt = $conduit_db->prepare($sql);
     $stmt->execute(array('class' => $Class));
     while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-        check_teacher($row['User'], $row['DisplayName'], $row['Email']);
+        check_teacher($Class, $row['User'], $row['DisplayName'], $row['Email']);
     }
 }
 
-$Log .= "Работа начата.<br/>";
-write_to_all_teachers();
+//$Log .= "Работа начата.<br/>";
+//$Class = 'd17';
+//write_to_all_teachers($Class);
 
-//send_mime_mail("Электронный кондуит", "reminder@econduit.ru",  "Женя", "eugene57@yandex.ru", 'UTF-8', 'UTF-8', "Отчёт о работе", $Log, TRUE);
+$sql = "SELECT
+            `PClass`.`ID` as `Class`
+        FROM
+            `PClass`
+        WHERE
+            `RemindTeachers` = 'Y'
+        ";
+$stmt = $conduit_db->prepare($sql);
+$stmt->execute();
+while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+    $Log .= "Работа начата. Класс: {$row['Class']}<br/>";
+    write_to_all_teachers($row['Class']);
+}
+
+// send_mime_mail("Электронный кондуит", "reminder@econduit.ru",  "Женя", "eugene57@yandex.ru", 'UTF-8', 'UTF-8', "Отчёт о работе", $Log, TRUE);
 
 ?>

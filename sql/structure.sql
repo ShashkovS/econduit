@@ -11,6 +11,7 @@ CREATE TABLE IF NOT EXISTS `PClass` (
   `ID` varchar(15) NOT NULL COMMENT 'Название',
   `Public` varchar(1) NOT NULL DEFAULT 'Y',
   `Description` varchar(100) NOT NULL COMMENT 'Описание',
+  `RemindTeachers` char(1) NOT NULL DEFAULT 'N' COMMENT 'Напоминать учителям о невнесённых задачах',
   PRIMARY KEY (`ID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Классы';
 
