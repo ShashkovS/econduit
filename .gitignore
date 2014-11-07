@@ -1,1 +1,2 @@
 include/conduit/Credentials.inc.php
+include/conduit/Settings.inc.php
