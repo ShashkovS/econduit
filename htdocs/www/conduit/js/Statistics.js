@@ -26,7 +26,7 @@
                         sortList: [[1, 1]],
                         sortAppend : [[0, 0]],
                         headers: headers,
-                        widgets: [ 'stickyHeaders' ],
+                        widgets: [ 'stickyHeaders' ]
                     });
                     
                     this.find('thead th').attr('title', 'Отсортировать');

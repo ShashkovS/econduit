@@ -1,5 +1,5 @@
 import os
-import pyCssCompressor
+import Compressor.pyCssCompressor as pyCssCompressor
 
 top, dirs, files = os.walk(os.path.join(os.getcwd(), 'css_tests')).__next__()
 css_tests = [filename for filename in files if filename.endswith('.css')]

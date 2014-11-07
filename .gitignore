@@ -1,2 +1,4 @@
 include/conduit/Credentials.inc.php
 include/conduit/Settings.inc.php
+builder/config.ini
+builder/__pycache__/

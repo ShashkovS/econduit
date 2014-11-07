@@ -1,1 +1,0 @@
-.conduit_spoiler{cursor:pointer;border-bottom:2px dotted;font-size:140%;margin:.2em;display:inline-block}.conduit_container:not([data-state="opened"]) .conduit_spoiler{color:grey}.conduit_container:not([data-state="opened"]) :not(.conduit_spoiler){display:none}
