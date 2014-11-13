@@ -36,32 +36,44 @@ modules = [
     ('keyring', 'https://bitbucket.org/kang/python-keyring-lib/#rst-header-installation-instructions'),
 ]
 
-for module_name, module_help in modules:
-    try:
-        import_module(module_name)
-    except ImportError:
-        if pip_installed:
-            decision = ask_user(
-                'It looks like you don\'t have `{name}` package. Install it now?'.format(name = module_name),
-                variants = ['y', 'n'],
-            )
-            if decision == 'y':
-                rc = pip.main(['install', module_name])
-                if rc:
-                    # Some error occured
-                    raise ConfigError('PIP error: {}'.format(rc))
+def install_dependencies(modules):
+
+    for module_name, module_help in modules:
+        try:
+            import_module(module_name)
+        except ImportError:
+            if pip_installed:
+                decision = ask_user(
+                    'It looks like you don\'t have `{name}` package. Install it now?'.format(name = module_name),
+                    variants = ['y', 'n'],
+                )
+                if decision == 'y':
+                    try:
+                        rc = pip.main(['install', module_name])
+                        if rc:
+                            # Some error occured
+                            raise ConfigError('PIP error: {}'.format(rc))
+                    except BaseException as e:
+                        tell_user('You should install `{name}` manually. Installation instructions are available at {help}.'.format(
+                            name = module_name,
+                            help = module_help
+                        ))
+                        raise
+                else:
+                    tell_user('You should install `{name}` manually. Installation instructions are available at {help}.'.format(
+                        name = module_name,
+                        help = module_help
+                    ))
+                    raise ConfigError('Unable to proceed...')
             else:
-                tell_user('Installation instructions are available at {help}.'.format(
+                tell_user('It looks like you don\'t have `{name}` package. You should install it manually. Installation instructions are available at {help}.'.format(
                     name = module_name,
                     help = module_help
                 ))
                 raise ConfigError('Unable to proceed...')
-        else:
-            tell_user('It looks like you don\'t have `{name}` package. Installation instructions are available at {help}.'.format(
-                name = module_name,
-                help = module_help
-            ))
-            raise ConfigError('Unable to proceed...')
+
+
+install_dependencies(modules)
 
 #-------------------------------------------------------------------------------
 

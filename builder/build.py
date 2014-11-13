@@ -606,6 +606,9 @@ class Builder:
         self._remote_file_list.write(buffer)
         buffer.seek(0)
 
+        if not self._ftp:
+            self.connect_to_ftp()
+
         self._ftp.cwd(self._ftp_config['build_dir'])
         self._ftp.storbinary('STOR files.ini', buffer)
 
@@ -739,8 +742,16 @@ with Builder(server) as builder:
             time = time,
         ))
     except BaseException as e:
+        # Если что-то сломалось, попытаемся хотя бы записать на сайт актуальный статус
+        try:
+            builder.write_remote_file_list()
+        except:
+            pass
+
+        # Удаляем мьютекс
         try:
             builder.unlock_mutex()
         except:
             pass
+
         tell_user(str(e))
