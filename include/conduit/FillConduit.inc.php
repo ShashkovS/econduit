@@ -108,6 +108,12 @@ function fillConduit($ClassID, $ListID) {
         }
         $ColGroup .= '<col' . $class . ' data-sign="' . addslashes($Problem['Sign']) . '"/>';
     }
+    // Shit-code start
+    if ($ClassID == 'd15variant') {
+        $hRow .= '<th scope="col" class="problemName total">Сумма</th>';
+        $ColGroup .= '<col/>';
+    }
+    // Shit-code end
     $hRow .= '</tr>';
     $ColGroup .= '</colgroup>';
     
@@ -122,15 +128,22 @@ function fillConduit($ClassID, $ListID) {
         // Имя школьника
         $Row .= '<th scope="row" class="pupilName">' . $Pupil['Name'] . '</th>';
         // Сданные задачи
+        $TotalResult = 0.0;
         foreach ($Problems as $Problem) {
             if (isset($Marks[$Pupil['ID']][$Problem['ID']])) {
                 $Cell = new Cell($Marks[$Pupil['ID']][$Problem['ID']]);
+                $TotalResult += $Cell->price();
                 $Cell = $Cell->html();
             } else {
                 $Cell = '<td></td>';
             }
             $Row .= $Cell;
         }
+        // Shit-code start
+        if ($ClassID == 'd15variant') {
+            $Row .= '<td>' . $TotalResult . '</td>';
+        }
+        // Shit-code end
         $Row .= "</tr>";
         $TBody .= $Row;
     }

@@ -36,6 +36,32 @@ class Cell {
         return '<td data-mark="' . $this->mark . '" title="' . $this->hint . '">' . $this->content . '</td>';
     }
     
+    public function price() {
+        if ($this->mark == '+') {
+            return 1.0;
+        } elseif ($this->mark == '4') {
+            return 1.0;
+        } elseif ($this->mark == '3') {
+            return 0.75;
+        } elseif ($this->mark == '2') {
+            return 0.5;
+        } elseif ($this->mark == '1') {
+            return 0.25;
+        } elseif ($this->mark == self::unichr(10789)) {
+            return 0.99;
+        } elseif ($this->mark == self::unichr(177)) {
+            return 0.7;
+        } elseif ($this->mark == self::unichr(10791)) {
+            return 0.5;
+        } elseif ($this->mark == self::unichr(8723)) {
+            return 0.3;
+        } elseif ($this->mark == self::unichr(10794)) {
+            return 0.01;
+        } else {
+            return 0.0;
+        }
+    }
+    
     // преобразуем строку вида 'n/d/r' к виду $\frac{n}{d}$ в нотации MathML
     private static function String2Frac($str) {
         $slash1 = strpos($str, '/');
@@ -56,6 +82,11 @@ class Cell {
     private static function MakeFrac($n, $d) {
         return "<math><mfrac><mn>$n</mn><mn>$d</mn></mfrac></math>";
     }
+    
+    private static function unichr($u) {
+        return mb_convert_encoding('&#' . intval($u) . ';', 'UTF-8', 'HTML-ENTITIES');
+    }
+
 }
 
 ?>
