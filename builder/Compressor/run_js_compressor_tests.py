@@ -1,5 +1,5 @@
 import os
-import pyJSCompressor
+import Compressor.pyJSCompressor as pyJSCompressor
 
 top, dirs, files = os.walk(os.path.join(os.getcwd(), 'js_tests')).__next__()
 js_tests = [filename for filename in files if filename.endswith('.js')]
