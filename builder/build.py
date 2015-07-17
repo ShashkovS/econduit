@@ -153,6 +153,9 @@ class FileObject:
 
         return path
 
+    def __str__(self):
+        return self._path
+
 #-------------------------------------------------------------------------------
 
 class Dir (FileObject):
@@ -676,24 +679,30 @@ class Builder:
         # Apply changes
         self.connect_to_ftp()
 
-        for dir in dirs_to_create:
-            dir.upload_to_server(self._ftp)
+        try:
+            for dir in dirs_to_create:
+                dir.upload_to_server(self._ftp)
+                tell_user('{} created'.format(dir))
 
-        for file in files_to_update:
-            # minify and upload file
-            file.upload_to_server(self._ftp, self._remote_file_list)
+            for file in files_to_update:
+                # minify and upload file
+                file.upload_to_server(self._ftp, self._remote_file_list)
+                tell_user('{} updated'.format(file))
 
-        for file in files_to_delete:
-            file.delete_from_server(self._ftp, self._remote_file_list)
+            for file in files_to_delete:
+                file.delete_from_server(self._ftp, self._remote_file_list)
+                tell_user('{} deleted'.format(file))
 
-        for dir in dirs_to_delete:
-            dir.delete_from_server(self._ftp)
+            for dir in dirs_to_delete:
+                dir.delete_from_server(self._ftp)
+                tell_user('{} deleted'.format(file))
 
-        self.write_remote_file_list()
+        finally:
+            self.write_remote_file_list()
 
-        self.unlock_mutex()
+            self.unlock_mutex()
 
-        self.disconnect_from_ftp()
+            self.disconnect_from_ftp()
 
         tell_user('Mission accomplished')
 
@@ -725,8 +734,8 @@ class Builder:
 try:
     server = sys.argv[1]
 except IndexError:
-    tell_user('FTP-server not specified')
-    exit(0)
+    server = ask_user('Enter FTP alias')
+
 
 # TODO: Добавить режим force --- игнорируем оглавление
 

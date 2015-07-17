@@ -1,5 +1,7 @@
 from urllib.parse import urlencode
 from urllib.request import Request, urlopen
+import os
+import tempfile
 
 def compress(js_data):
     """Sends passed js code to Google Closure Compiler Service, returns the compressed code"""
@@ -7,6 +9,7 @@ def compress(js_data):
     URL = 'http://closure-compiler.appspot.com/compile'
     # some magic (from https://developers.google.com/closure/compiler/docs/api-tutorial2)
     HEADERS = { "Content-type": "application/x-www-form-urlencoded" }
+    print('using closure-compiler.appspot.com to compress')
 
     # encoding some params and given js code
     params = urlencode([
@@ -37,4 +40,5 @@ def compress(js_data):
 
     # well-done, google!
     return res_js
+
 
