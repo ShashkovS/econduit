@@ -449,18 +449,21 @@
             $('#undoButton').attr('disabled', 'disabled');
         }
 
-        function SelectPupil($PupilID) {
+        function SelectPupil($PupilID, PupilRow) {
             if ($PupilID === $('#pupil').val()) { // Данный школьник и так уже выбран
                 $PupilID = '';
             }
             $('#pupil').val($PupilID);
+            var OldPosition = PupilRow.offset().top - $(window).scrollTop();
             FilterPupils();
+            $('html, body').animate({scrollTop: PupilRow.offset().top - OldPosition}, 0);
         }
 
         // Пользователь дважды кликнул по ФИО ученика
         function MouseDoubleClickName() {
             var PupilID = $(this).closest('tr').attr('data-pupil');
-            SelectPupil(PupilID);
+            var PupilRow = $(this).closest('tr');
+            SelectPupil(PupilID, PupilRow);
         }
         // Пользователь один раз кликнул по ФИО. Ловим долгое нажатие
         function MouseClickName() {
@@ -470,9 +473,10 @@
         }
         function MouseDownName() {
             var PupilID = $(this).closest('tr').attr('data-pupil');
+            var PupilRow = $(this).closest('tr');
             longpress = false; //longpress is false initially
             pressTimer = window.setTimeout(function(PupilID){
-                SelectPupil(PupilID);
+                SelectPupil(PupilID, PupilRow);
                 longpress = true; //if run hold function, longpress is true
             },750, PupilID)}
         function MouseUpName() {

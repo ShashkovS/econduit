@@ -117,7 +117,7 @@ function fillConduit($ClassID, $ListID) {
         }
         $ColGroup .= '<col' . $class . ' data-sign="' . addslashes($Problem['Sign']) . '"/>';
         $NumProblems += 1;
-        if($Problem['Sign'] == "") {
+        if($Problem['Sign'] !== "*" and $Problem['Sign'] !== "**") {
             $NumObligatory += 1;
         }
     }
