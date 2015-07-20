@@ -19,6 +19,13 @@ function SplitProblemName($str) {
     }
 }
 
+function TotalColor($value) {
+    if ($value >= 1) return "background-color: rgb(0,255,0)";
+    if ($value <= .5) return "background-color: rgb(" . round(248 + (255 - 248) * $value * 2) . ", " . round(105 + (235 - 105) * $value * 2) . ", " . round(107 + (132 - 107) * $value * 2) . ")";
+    $value -= .5;
+    return "background-color: rgb(" . round(255 - (255 - 99) * $value * 2) . ", " . round(235 + (240 - 235) * $value * 2) . ", " . round(132 - (132 - 123) * $value * 2) . ")";
+}
+
 function fillConduit($ClassID, $ListID) {
     global $conduit_db, $ConduitUser;
     
@@ -92,6 +99,8 @@ function fillConduit($ClassID, $ListID) {
     $ColGroup .= '<col/>';
     // Номера задач
     $PrevGroup = null;
+    $NumProblems = 0;
+    $NumObligatory = 0;
     foreach ($Problems as $Problem) {
         if ($ConduitUser->may_manage('Marks')) {
             $hRow .= '<th scope="col" class="problemName" data-problem="' . $Problem['ID'] . '">';
@@ -107,13 +116,18 @@ function fillConduit($ClassID, $ListID) {
             $class = '';
         }
         $ColGroup .= '<col' . $class . ' data-sign="' . addslashes($Problem['Sign']) . '"/>';
+        $NumProblems += 1;
+        if($Problem['Sign'] == "") {
+            $NumObligatory += 1;
+        }
     }
-    // Shit-code start
-    if ($ClassID == 'd15variant') {
-        $hRow .= '<th scope="col" class="problemName total">Сумма</th>';
-        $ColGroup .= '<col/>';
+
+    if ($ConduitUser->may_manage('Marks')) {
+        // Добавляем столбец для результатов. Его можно будет скрыть при необходимости
+        $hRow .= '<th scope="col" class="problemName total" data-totalProblems="' . $NumProblems . '" data-obligatoryProblems="' . $NumObligatory . '">Сумма</th>';
+        $ColGroup .= '<col class="total"/>';
     }
-    // Shit-code end
+
     $hRow .= '</tr>';
     $ColGroup .= '</colgroup>';
     
@@ -139,11 +153,12 @@ function fillConduit($ClassID, $ListID) {
             }
             $Row .= $Cell;
         }
-        // Shit-code start
-        if ($ClassID == 'd15variant') {
-            $Row .= '<td>' . $TotalResult . '</td>';
+
+        if ($ConduitUser->may_manage('Marks')) {
+            // Записываем в ячейку текущее количество задач
+            $Row .= '<td class="total" style="' . TotalColor($TotalResult / $NumObligatory) . '" data-obligatoryProblems="' . $NumObligatory . '">' . $TotalResult . '</td>';
         }
-        // Shit-code end
+
         $Row .= "</tr>";
         $TBody .= $Row;
     }

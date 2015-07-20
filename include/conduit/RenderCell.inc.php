@@ -37,25 +37,18 @@ class Cell {
     }
     
     public function price() {
-        if ($this->mark == '+') {
+        // Если вбита дата, то считаем, что это 1
+        if ($this->mark == '+' or preg_match("/^\d{2}\/\d{2}\/\d{4}$/", $this->mark) == 1) {
             return 1.0;
-        } elseif ($this->mark == '4') {
-            return 1.0;
-        } elseif ($this->mark == '3') {
-            return 0.75;
-        } elseif ($this->mark == '2') {
-            return 0.5;
-        } elseif ($this->mark == '1') {
-            return 0.25;
-        } elseif ($this->mark == self::unichr(10789)) {
+        } elseif ($this->mark == self::unichr(10789) or $this->mark == '+.') {
             return 0.99;
-        } elseif ($this->mark == self::unichr(177)) {
+        } elseif ($this->mark == self::unichr(177) or $this->mark == '+-') {
             return 0.7;
-        } elseif ($this->mark == self::unichr(10791)) {
-            return 0.5;
-        } elseif ($this->mark == self::unichr(8723)) {
-            return 0.3;
-        } elseif ($this->mark == self::unichr(10794)) {
+        } elseif ($this->mark == self::unichr(10791) or $this->mark == '+/2') {
+            return 0.45;
+        } elseif ($this->mark == self::unichr(8723) or $this->mark == '-+') {
+            return 0.2;
+        } elseif ($this->mark == self::unichr(10794) or $this->mark == '-.') {
             return 0.01;
         } else {
             return 0.0;

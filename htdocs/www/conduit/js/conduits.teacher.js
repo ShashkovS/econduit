@@ -7,6 +7,7 @@
         var AreaCorner = {};
         var RequestStack = [];
         var ShowFloatingHeader = true;
+        var DateMarkRegExp = /^\d{2}\/\d{2}\/\d{4}$/;
 
         // Адаптация jQuery.FloatHeader для целей кондуита
         $.fn.floatHeader = function() {
@@ -183,6 +184,42 @@
 
         // ========================================= Teacher's features ========================================= //
 
+        // Стоимость ячейки
+        function Price(Mark) {
+            if (Mark == '+' || DateMarkRegExp.test(Mark)) {
+                return 1;
+            } else if (Mark == '+.' || Mark == String.fromCharCode(10789)) {
+                return 0.99;
+            } else if (Mark == '+-' || Mark == String.fromCharCode(177)) {
+                return 0.7;
+            } else if (Mark == '+/2' || Mark == String.fromCharCode(10791)) {
+                return 0.45;
+            } else if (Mark == '-+' || Mark == String.fromCharCode(8723)) {
+                return 0.2;
+            } else if (Mark == '-.' || Mark == String.fromCharCode(10794)) {
+                return 0.01;
+            } else {
+                return 0;
+            }
+        }
+
+        // Цвет итога
+        function TotalColor(value) {
+            if (value >= 1) {
+                return "rgb(0,255,0)";
+            } else if (value <= 0.5) {
+                value = value * 2;
+                return "rgb(" + Math.round(248 + (255 - 248) * value).toString() + ", " 
+                              + Math.round(105 + (235 - 105) * value).toString() + ", " 
+                              + Math.round(107 + (132 - 107) * value).toString() + ")";
+            } else {
+                value = (value - 0.5) * 2;
+                return "rgb(" + Math.round(255 - (255 - 99) * value).toString() + ", " 
+                              + Math.round(235 + (240 - 235) * value).toString() + ", " 
+                              + Math.round(132 - (132 - 123) * value).toString() + ")";
+            }
+        }
+
         // Добавление в массив Request запроса на обновление ещё одной ячейки
         function Add2Request(Request, $conduit, X, Y, Mark) {
             // Проверяем, что ячейка видима. В противном случае ничего не делаем.
@@ -233,6 +270,17 @@
                                 } else {
                                     $Cell.removeClass('highlighted');
                                 }
+                                // Теперь нужно пересчитать сумму. Пока просто пройдёмся по всей строке и просуммируем
+                                var $ThisRow = this.find('tr[data-pupil="'+Response[i].Pupil+'"]');
+                                var sum = 0;
+                                $ThisRow.children("[data-mark]").each(function(){
+                                    sum += Price($(this).attr('data-mark'));
+                                });
+                                var $TotalCell = $ThisRow.children(":last")
+                                $TotalCell.text(+(Math.round(sum + "e+2")  + "e-2")); // Здесь хитрый трюк для правильного округления
+                                // Подкрашиваем
+                                var obligatory = parseInt($TotalCell.attr('data-obligatoryproblems'));
+                                $TotalCell.css("background-color", TotalColor(sum / obligatory));
                             }
                             if (Type === 'rollback') {
                                 // Удаляем запрос из стека запросов
@@ -503,12 +551,14 @@
             // Устанавливаем обработчики событий кондуита
             var $conduits = $('#conduits');
             // Для заголоков столбцов (в том числе в плавающих шапках)
-            $conduits.on({'mouseover': MouseOverCol, 'mouseout': MouseUnselect}, '.conduit .problemName');
+            $conduits.on({'mouseover': MouseOverCol, 'mouseout': MouseUnselect}, ".conduit .problemName:not('.total')");
             // Для заголовков строк (имена школьников)
             $conduits.on({'mouseover': MouseOverRow, 'mouseout': MouseUnselect, 'dblclick': MouseDoubleClickName}, '.conduit .pupilName');
             $conduits.on({'click': MouseClickName, 'mousedown': MouseDownName, 'mouseup': MouseUpName}, '.conduit .pupilName');
             // Для ячеек с отметками
-            $conduits.on({'mouseover': MouseOverCell, 'mouseout': MouseUnselect, 'click': MouseClickCell}, '.conduit td');
+            $conduits.on({'mouseover': MouseOverCell, 'mouseout': MouseUnselect, 'click': MouseClickCell}, ".conduit td:not('.total')");
+            // Для строк с результатом
+            $conduits.on({'mouseover': MouseOverRow, 'mouseout': MouseUnselect}, '.conduit .total');
             // Для кондуитов в целом
             $conduits.on({'mouseleave': QuitAreaMode}, '.conduit');
             // Для спойлеров

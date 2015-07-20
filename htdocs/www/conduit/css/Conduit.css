@@ -21,7 +21,7 @@
 }
 
 /* Двойная граница между задачами */
-.problemStart {
+.problemStart, .total {
     border-left: medium double;
 }
 .conduit tbody td {
@@ -46,7 +46,7 @@
     background-color: #BBB;
 }
 .conduit col[data-sign="°"] {
-    background-color: #DDD;
+    background-color: #80DAEB;
 }
 
 /* Подсветка при наведении курсора */

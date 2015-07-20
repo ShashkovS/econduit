@@ -60,13 +60,15 @@ function makeSpoilers($ClassID) {
         if (in_array($Entry['ID'], $opened_spoilers)) {
             $conduit = fillConduit($ClassID, $Entry['ID']);
             $state   = 'opened';
+            $print_class = 'print';
         } else {
             $conduit = '';
             $state   = 'empty';
+            $print_class = '';
         }
         echo(
 <<<SPOILER
-        <li class="conduit_container" data-id="${Entry['ID']}" data-state="$state">
+        <li class="conduit_container $print_class" data-id="${Entry['ID']}" data-state="$state">
             <span class="conduit_spoiler">${Entry['Text']}</span>
             <p class="loading" style="display: none;">Ждите. Производится загрузка данных с сервера&hellip;</p>
             $conduit
