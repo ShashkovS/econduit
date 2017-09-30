@@ -18,7 +18,7 @@ $ConduitUser->must_manage('Classes');
     <title><?php echo $Class['Description'];?>: управление школьниками</title>
 
     <!-- Подключаем jQuery -->
-    <script type="text/javascript" src="http://yastatic.net/jquery/2.1.1/jquery.min.js"></script>
+    <script type="text/javascript" src="//yastatic.net/jquery/2.1.1/jquery.min.js"></script>
 
     <!-- Остальные скрипты -->
     <script type="text/javascript">
@@ -34,7 +34,7 @@ $ConduitUser->must_manage('Classes');
     </script>
     
     <!-- Подключаем jQuery Form plugin -->
-    <script type="text/javascript" src="http://yastatic.net/jquery/form/3.14/jquery.form.min.js"></script>
+    <script type="text/javascript" src="//yastatic.net/jquery/form/3.14/jquery.form.min.js"></script>
     
     <!-- Все необходимые стили -->
     <style type="text/css">

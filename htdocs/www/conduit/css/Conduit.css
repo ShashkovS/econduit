@@ -49,9 +49,13 @@
 .conduit col[data-sign="*"], .conduit col[data-sign="**"] {
     background-color: #BBB;
 }
-.conduit col[data-sign="°"] {
-    background-color: #E0FFFF;
+.conduit col[data-sign="✎"] {
+    background-color: #ffe3ee;
 }
+.conduit col[data-sign="°"] {
+    background-color: #e0ffff;
+}
+
 
 /* Подсветка при наведении курсора */
 .conduit:not(#d) .mouseOver {

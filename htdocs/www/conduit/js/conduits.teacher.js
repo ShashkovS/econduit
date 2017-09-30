@@ -265,9 +265,12 @@
                                 } else {
                                     $Cell.removeAttr('data-mark').removeAttr('title');
                                 }
-                                if ($('#autoCaption').val() === Response[i].Mark && Response[i].Mark !== '') {
-                                    $Cell.addClass('highlighted');
+//                                if ($('#autoCaption').val() === Response[i].Mark && Response[i].Mark !== '') {
+                                // "Свои" отметки выделяем отдельно
+                                if (Response[i].Mark !== '') {
+                                    $Cell.addClass('mymarks');
                                 } else {
+                                    $Cell.removeClass('mymarks');
                                     $Cell.removeClass('highlighted');
                                 }
                                 // Теперь нужно пересчитать сумму. Пока просто пройдёмся по всей строке и просуммируем
@@ -341,6 +344,9 @@
 
             // Текущий запрос
             var Request = [];
+
+            // Выделяем текущую строчку (для удобства на телефоне)
+            $(this).parent().addClass('mouseOver');
 
             // Метка, которая будет проставляться
             var Mark;
