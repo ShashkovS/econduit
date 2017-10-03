@@ -19,6 +19,7 @@ function SplitProblemName($str) {
     }
 }
 
+<<<<<<< HEAD
 function TotalColor($value) {
     if ($value >= 1) return "background-color: rgb(0,255,0)";
     if ($value <= .5) return "background-color: rgb(" . round(248 + (255 - 248) * $value * 2) . ", " . round(105 + (235 - 105) * $value * 2) . ", " . round(107 + (132 - 107) * $value * 2) . ")";
@@ -27,8 +28,11 @@ function TotalColor($value) {
 }
 
 function fillConduit($ClassID, $ListID) {
+=======
+function fillConduit($ClassID, $ListID, $toJSON = false) {
+>>>>>>> feature-json
     global $conduit_db, $ConduitUser;
-    
+
     // Готовим массив школьников
     $sql = "SELECT 
                 `PPupil`.`ID` AS `ID`, 
@@ -87,6 +91,18 @@ function fillConduit($ClassID, $ListID) {
         $Marks[$row['PupilID']][$row['ProblemID']] = new Mark($row['Text'], $row['User'], $row['DateTime']);
     }
     
+    // Возвращаем данные в JSON, если требуется
+    if ($toJSON) {
+        $data = array(
+	    'ClassID'   => $ClassID,
+	    'ListID'    => $ListID,
+	    'Pupils'    => $Pupils,
+	    'Problems'	=> $Problems,
+	    'Marks'     => $Marks
+	    );
+	return json_encode($data);
+    }
+
     // Собираем заголовочную строку таблицы (с номерами задач) и одновременно colgroup
     $hRow = '<tr class="headerRow">';
     $ColGroup = '<colgroup>';
