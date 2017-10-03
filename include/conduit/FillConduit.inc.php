@@ -19,9 +19,9 @@ function SplitProblemName($str) {
     }
 }
 
-function fillConduit($ClassID, $ListID) {
+function fillConduit($ClassID, $ListID, $toJSON = false) {
     global $conduit_db, $ConduitUser;
-    
+
     // Готовим массив школьников
     $sql = "SELECT 
                 `PPupil`.`ID` AS `ID`, 
@@ -80,6 +80,18 @@ function fillConduit($ClassID, $ListID) {
         $Marks[$row['PupilID']][$row['ProblemID']] = new Mark($row['Text'], $row['User'], $row['DateTime']);
     }
     
+    // Возвращаем данные в JSON, если требуется
+    if ($toJSON) {
+        $data = array(
+	    'ClassID'   => $ClassID,
+	    'ListID'    => $ListID,
+	    'Pupils'    => $Pupils,
+	    'Problems'	=> $Problems,
+	    'Marks'     => $Marks
+	    );
+	return json_encode($data);
+    }
+
     // Собираем заголовочную строку таблицы (с номерами задач) и одновременно colgroup
     $hRow = '<tr class="headerRow">';
     $ColGroup = '<colgroup>';

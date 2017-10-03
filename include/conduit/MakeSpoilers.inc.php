@@ -25,7 +25,7 @@ function compareList(&$a, &$b) {
 
 // Формируем список спойлеров с кондуитам внутри.
 // В списке присутствуют кондуиты всех листков данного класса, упорядоченные от самых последних к самым старым.
-function makeSpoilers($ClassID) {
+function makeSpoilers($ClassID, $toJSON = false) {
     global $conduit_db;
     
     // Формируем список доступных листков на основе таблицы PList
@@ -48,6 +48,16 @@ function makeSpoilers($ClassID) {
     // Сортируем листки интеллектуально
     usort($List, 'compareList');
     
+    // Выводим данные в JSON, если требуется
+    if ($toJSON) {
+        $data = array(
+            'ClassID' => $ClassID,
+            'List'    => $List
+            );
+        echo json_encode($data);
+        return;
+    }
+
     // Определяем, какие из спойлеров должны быть открыты
     if (isset($_COOKIE['ec_open'])) {
         $opened_spoilers = explode(',', $_COOKIE['ec_open']);
