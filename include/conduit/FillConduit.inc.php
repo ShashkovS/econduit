@@ -26,9 +26,9 @@ function TotalColor($value) {
     return "background-color: rgb(" . round(255 - (255 - 99) * $value * 2) . ", " . round(235 + (240 - 235) * $value * 2) . ", " . round(132 - (132 - 123) * $value * 2) . ")";
 }
 
-function fillConduit($ClassID, $ListID) {
+function fillConduit($ClassID, $ListID, $toJSON = false) {
     global $conduit_db, $ConduitUser;
-    
+
     // Готовим массив школьников
     $sql = "SELECT 
                 `PPupil`.`ID` AS `ID`, 
@@ -65,9 +65,15 @@ function fillConduit($ClassID, $ListID) {
 
     // Готовим информацию об оценках
     $sql = "SELECT 
-                `PList`.`MinFor3` AS `MinFor3`, 
-                `PList`.`MinFor4` AS `MinFor4`, 
-                `PList`.`MinFor5` AS `MinFor5` 
+                `PList`.`ID` AS `ID`,
+                `PList`.`ListTypeID` AS `ListTypeID`,
+                `PList`.`ClassID` AS `ClassID`,
+                `PList`.`Number` AS `Number`,
+                `PList`.`Description` AS `Description`,
+                `PList`.`Date` AS `Date`,
+                `PList`.`MinFor5` AS `MinFor5`,
+                `PList`.`MinFor4` AS `MinFor4`,
+                `PList`.`MinFor3` AS `MinFor3`
             FROM `PList`
             WHERE 
                 `PList`.`ID` = ?
@@ -105,6 +111,18 @@ function fillConduit($ClassID, $ListID) {
         $Marks[$row['PupilID']][$row['ProblemID']] = new Mark($row['Text'], $row['User'], $row['DateTime']);
     }
     
+    // Возвращаем данные в JSON, если требуется
+    if ($toJSON) {
+        $data = array(
+        'ClassID'   => $ClassID,
+        'ListID'    => $ListID,
+        'Pupils'    => $Pupils,
+        'Problems'  => $Problems,
+        'Marks'     => $Marks
+        );
+    return json_encode($data);
+    }
+
     // Собираем заголовочную строку таблицы (с номерами задач) и одновременно colgroup
     $hRow = '<tr class="headerRow">';
     $ColGroup = '<colgroup>';
