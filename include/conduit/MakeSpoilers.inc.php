@@ -23,13 +23,14 @@ function compareList(&$a, &$b) {
     return strcmp($a['Text'], $b['Text']);
 }
 
+
 // Формируем список спойлеров с кондуитам внутри.
 // В списке присутствуют кондуиты всех листков данного класса, упорядоченные от самых последних к самым старым.
-function makeSpoilers($ClassID, $toJSON = false) {
+function makeSpoilers($ClassID) {
     global $conduit_db;
     
     // Формируем список доступных листков на основе таблицы PList
-    $sql = 'SELECT `ID`, `Number`, `ListTypeID` as `Type`, `Description` FROM `PList` ' . 
+    $sql = 'SELECT `ID`, `Number`, `ListTypeID` as `Type`, `Description`, `MinFor3`, `MinFor4`, `MinFor5`  FROM `PList` ' . 
            'WHERE `ClassID`  = ? OR `ClassID` IS NULL';
     $stmt = $conduit_db->prepare($sql);
     $stmt->execute(array($ClassID));
@@ -41,23 +42,16 @@ function makeSpoilers($ClassID, $toJSON = false) {
         $List[$i++] = array(
             'ID'   => $ID,
             'Text' => $Text,
-            'Type' => $row['Type']
+            'Type' => $row['Type'],
+            'MinFor3' => $row['MinFor3'],
+            'MinFor4' => $row['MinFor4'],
+            'MinFor5' => $row['MinFor5']
         );
     }
     
     // Сортируем листки интеллектуально
     usort($List, 'compareList');
     
-    // Выводим данные в JSON, если требуется
-    if ($toJSON) {
-        $data = array(
-            'ClassID' => $ClassID,
-            'List'    => $List
-            );
-        echo json_encode($data);
-        return;
-    }
-
     // Определяем, какие из спойлеров должны быть открыты
     if (isset($_COOKIE['ec_open'])) {
         $opened_spoilers = explode(',', $_COOKIE['ec_open']);
@@ -78,7 +72,7 @@ function makeSpoilers($ClassID, $toJSON = false) {
         }
         echo(
 <<<SPOILER
-        <li class="conduit_container $print_class" data-id="${Entry['ID']}" data-state="$state">
+        <li class="conduit_container $print_class" data-id="${Entry['ID']}" data-state="$state" data-mf3="${Entry['MinFor3']}" data-mf4="${Entry['MinFor4']}" data-mf5="${Entry['MinFor5']}">
             <span class="conduit_spoiler">${Entry['Text']}</span>
             <p class="loading" style="display: none;">Ждите. Производится загрузка данных с сервера&hellip;</p>
             $conduit

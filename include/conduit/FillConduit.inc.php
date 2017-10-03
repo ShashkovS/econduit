@@ -26,9 +26,9 @@ function TotalColor($value) {
     return "background-color: rgb(" . round(255 - (255 - 99) * $value * 2) . ", " . round(235 + (240 - 235) * $value * 2) . ", " . round(132 - (132 - 123) * $value * 2) . ")";
 }
 
-function fillConduit($ClassID, $ListID, $toJSON = false) {
+function fillConduit($ClassID, $ListID) {
     global $conduit_db, $ConduitUser;
-
+    
     // Готовим массив школьников
     $sql = "SELECT 
                 `PPupil`.`ID` AS `ID`, 
@@ -49,17 +49,35 @@ function fillConduit($ClassID, $ListID, $toJSON = false) {
                 `PProblem`.`ID` AS `ID`, 
                 `PProblem`.`Group` AS `Group`, 
                 CONCAT(`PProblem`.`Name`, `PProblemType`.`Sign`) AS `Name`,
-                TRIM(`PProblemType`.`Sign`) AS `Sign`
+                TRIM(`PProblemType`.`Sign`) AS `Sign`,
+                `PProblemType`.`NotSolvedPen` AS `NotSolvedPen`, 
+                `PProblemType`.`ProbValue` AS `ProbValue`
             FROM `PProblem` INNER JOIN `PProblemType`
                  ON `PProblem`.`ProblemTypeID` = `PProblemType`.`ID`
             WHERE 
                 `PProblem`.`ListID` = ?
             ORDER BY
                 `PProblem`.`Number`, `PProblem`.`Name`, `PProblem`.`ID`
-           ";
+           "; 
     $stmt = $conduit_db->prepare($sql);
     $stmt->execute(array($ListID));
     $Problems = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    // Готовим информацию об оценках
+    $sql = "SELECT 
+                `PList`.`MinFor3` AS `MinFor3`, 
+                `PList`.`MinFor4` AS `MinFor4`, 
+                `PList`.`MinFor5` AS `MinFor5` 
+            FROM `PList`
+            WHERE 
+                `PList`.`ID` = ?
+           "; 
+    $stmt = $conduit_db->prepare($sql);
+    $stmt->execute(array($ListID));
+    $Lists = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    foreach ($Lists as $List) {
+    };
+
     
     // Готовим массив отметок
     $Marks = array();
@@ -87,18 +105,6 @@ function fillConduit($ClassID, $ListID, $toJSON = false) {
         $Marks[$row['PupilID']][$row['ProblemID']] = new Mark($row['Text'], $row['User'], $row['DateTime']);
     }
     
-    // Возвращаем данные в JSON, если требуется
-    if ($toJSON) {
-        $data = array(
-        'ClassID'   => $ClassID,
-        'ListID'    => $ListID,
-        'Pupils'    => $Pupils,
-        'Problems'    => $Problems,
-        'Marks'     => $Marks
-        );
-    return json_encode($data);
-    }
-
     // Собираем заголовочную строку таблицы (с номерами задач) и одновременно colgroup
     $hRow = '<tr class="headerRow">';
     $ColGroup = '<colgroup>';
@@ -113,6 +119,7 @@ function fillConduit($ClassID, $ListID, $toJSON = false) {
     $PrevGroup = null;
     $NumProblems = 0;
     $NumObligatory = 0;
+    $MaxPoints = 0;
     foreach ($Problems as $Problem) {
         if ($ConduitUser->may_manage('Marks')) {
             $hRow .= '<th scope="col" class="problemName" data-problem="' . $Problem['ID'] . '">';
@@ -127,16 +134,30 @@ function fillConduit($ClassID, $ListID, $toJSON = false) {
         } else {
             $class = '';
         }
-        $ColGroup .= '<col' . $class . ' data-sign="' . addslashes($Problem['Sign']) . '"/>';
+        $ColGroup .= '<col' . $class . ' data-sign="' . addslashes($Problem['Sign']) . '" '
+                                     . ' data-notsolvedpen="' . addslashes($Problem['NotSolvedPen'])  . '" '
+                                     . ' data-probvalue="' . addslashes($Problem['ProbValue'])  . '" '
+                                     . '"/>';
         $NumProblems += 1;
-        if($Problem['Sign'] !== "*" and $Problem['Sign'] !== "**") {
+        if($Problem['Sign'] !== "*" and $Problem['Sign'] !== "**" and mb_substr($Problem['Name'],0,6,"UTF-8") !== "Оценка") {
             $NumObligatory += 1;
         }
+        $MaxPoints += $Problem['ProbValue'];
     }
 
     if ($ConduitUser->may_manage('Marks')) {
         // Добавляем столбец для результатов. Его можно будет скрыть при необходимости
-        $hRow .= '<th scope="col" class="problemName total" data-totalProblems="' . $NumProblems . '" data-obligatoryProblems="' . $NumObligatory . '">Сумма</th>';
+        $hRow .= '<th scope="col" class="problemName total" ' 
+                 . 'data-totalProblems="' . $NumProblems . '" ' 
+                 . 'data-obligatoryProblems="' . $NumObligatory . '"' . '>Зд</th>';
+        $ColGroup .= '<col class="total"/>';
+        // Добавляем столбец для баллов
+        $hRow .= '<th scope="col" class="problemName total" ' 
+                 . 'data-maxpoints="' . $MaxPoints . '" ' . '>Бл</th>';
+        $ColGroup .= '<col class="total"/>';
+        // Добавляем столбец для оценки
+        $hRow .= '<th scope="col" class="problemName total" ' 
+                . '>Оц</th>';
         $ColGroup .= '<col class="total"/>';
     }
 
@@ -169,6 +190,10 @@ function fillConduit($ClassID, $ListID, $toJSON = false) {
         if ($ConduitUser->may_manage('Marks')) {
             // Записываем в ячейку текущее количество задач
             $Row .= '<td class="total" style="' . TotalColor($TotalResult / $NumObligatory) . '" data-obligatoryProblems="' . $NumObligatory . '">' . $TotalResult . '</td>';
+            // Записываем в ячейку текущее количество баллов
+            $Row .= '<td class="total" style="' . TotalColor($TotalResult / $NumObligatory) . '" data-maxpoints="' . $MaxPoints . '">' . $TotalResult . '</td>';
+            // Записываем в ячейку текущую оценку
+            $Row .= '<td class="total" style="' . TotalColor($TotalResult / $NumObligatory) . '" data-minfor3="' . $List['MinFor3'] . '">' . round(($TotalResult / $NumObligatory) * 5, 1) . '</td>';
         }
 
         $Row .= "</tr>";

@@ -29,7 +29,7 @@ function fillConduits($ClassID) {
     global $conduit_db;
     
     // Формируем список доступных листков на основе таблицы PList
-    $sql = 'SELECT `ID`, `Number`, `ListTypeID` as `Type`, `Description` FROM `PList` ' . 
+    $sql = 'SELECT `ID`, `Number`, `ListTypeID` as `Type`, `Description`, `MinFor3`, `MinFor4`, `MinFor5` FROM `PList` ' . 
            'WHERE `ClassID`  = ? OR `ClassID` IS NULL';
     $stmt = $conduit_db->prepare($sql);
     $stmt->execute(array($ClassID));
@@ -42,6 +42,9 @@ function fillConduits($ClassID) {
             'ID'   => $ID,
             'Text' => $Text,
             'Type' => $row['Type']
+            'MinFor3' => $row['MinFor3'],
+            'MinFor4' => $row['MinFor4'],
+            'MinFor5' => $row['MinFor5']
         );
     }
     
@@ -53,8 +56,8 @@ function fillConduits($ClassID) {
         echo(
 <<<SPOILER
         <li>
-            <span class="conduit_spoiler" data-id="${Entry['ID']}" data-state="empty">${Entry['Text']}</span>
-            <div class="conduit_container" data-id="${Entry['ID']}"></div>
+            <span class="conduit_spoiler" data-id="${Entry['ID']}" data-mf3="${Entry['MinFor3']}" data-mf4="${Entry['MinFor4']}" data-mf5="${Entry['MinFor5']}"> data-state="empty">${Entry['Text']}</span>
+            <div class="conduit_container" data-id="${Entry['ID']}</div>
             <p class="loading">Ждите. Производится загрузка данных с сервера&hellip;</p>
         </li>
 

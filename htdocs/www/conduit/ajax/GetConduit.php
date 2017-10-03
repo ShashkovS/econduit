@@ -9,12 +9,9 @@ require_once('AjaxError.inc.php');
 
 ?>
 <?php
+
 try {
-    $toJSON = isset($_POST['toJSON']);
-    if ($toJSON) {
-        header('Content-type: application/json');
-    }
-    echo fillConduit($Class['ID'], $_POST['List'], $toJSON);
+    echo fillConduit($Class['ID'], $_POST['List']);
 } catch (Exception $e) {
     triggerAjaxError(404);
 }
