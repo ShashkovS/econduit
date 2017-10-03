@@ -25,7 +25,7 @@ function compareList(&$a, &$b) {
 
 // Формируем список спойлеров с кондуитам внутри.
 // В списке присутствуют кондуиты всех листков данного класса, упорядоченные от самых последних к самым старым.
-function makeSpoilers($ClassID) {
+function makeSpoilers($ClassID, $toJSON = false) {
     global $conduit_db;
     
     // Формируем список доступных листков на основе таблицы PList
@@ -48,6 +48,16 @@ function makeSpoilers($ClassID) {
     // Сортируем листки интеллектуально
     usort($List, 'compareList');
     
+    // Выводим данные в JSON, если требуется
+    if ($toJSON) {
+        $data = array(
+            'ClassID' => $ClassID,
+            'List'    => $List
+            );
+        echo json_encode($data);
+        return;
+    }
+
     // Определяем, какие из спойлеров должны быть открыты
     if (isset($_COOKIE['ec_open'])) {
         $opened_spoilers = explode(',', $_COOKIE['ec_open']);
@@ -60,15 +70,13 @@ function makeSpoilers($ClassID) {
         if (in_array($Entry['ID'], $opened_spoilers)) {
             $conduit = fillConduit($ClassID, $Entry['ID']);
             $state   = 'opened';
-            $print_class = 'print';
         } else {
             $conduit = '';
             $state   = 'empty';
-            $print_class = '';
         }
         echo(
 <<<SPOILER
-        <li class="conduit_container $print_class" data-id="${Entry['ID']}" data-state="$state">
+        <li class="conduit_container" data-id="${Entry['ID']}" data-state="$state">
             <span class="conduit_spoiler">${Entry['Text']}</span>
             <p class="loading" style="display: none;">Ждите. Производится загрузка данных с сервера&hellip;</p>
             $conduit
