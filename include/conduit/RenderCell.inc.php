@@ -36,6 +36,25 @@ class Cell {
         return '<td data-mark="' . $this->mark . '" title="' . $this->hint . '">' . $this->content . '</td>';
     }
     
+    public function price() {
+        // Если вбита дата, то считаем, что это 1
+        if ($this->mark == '+' or preg_match("/^\d{2}\/\d{2}\/\d{4}$/", $this->mark) == 1) {
+            return 1.0;
+        } elseif ($this->mark == self::unichr(10789) or $this->mark == '+.') {
+            return 0.99;
+        } elseif ($this->mark == self::unichr(177) or $this->mark == '+-') {
+            return 0.7;
+        } elseif ($this->mark == self::unichr(10791) or $this->mark == '+/2') {
+            return 0.45;
+        } elseif ($this->mark == self::unichr(8723) or $this->mark == '-+') {
+            return 0.2;
+        } elseif ($this->mark == self::unichr(10794) or $this->mark == '-.') {
+            return 0.01;
+        } else {
+            return 0.0;
+        }
+    }
+    
     // преобразуем строку вида 'n/d/r' к виду $\frac{n}{d}$ в нотации MathML
     private static function String2Frac($str) {
         $slash1 = strpos($str, '/');
@@ -56,6 +75,11 @@ class Cell {
     private static function MakeFrac($n, $d) {
         return "<math><mfrac><mn>$n</mn><mn>$d</mn></mfrac></math>";
     }
+    
+    private static function unichr($u) {
+        return mb_convert_encoding('&#' . intval($u) . ';', 'UTF-8', 'HTML-ENTITIES');
+    }
+
 }
 
 ?>

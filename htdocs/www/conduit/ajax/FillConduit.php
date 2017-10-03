@@ -1,10 +1,11 @@
 <?php
 
-if (!defined('IN_CONDUIT')){
-    exit(0);
-}
-require_once('Connect.inc.php');
+define('IN_CONDUIT', true);
+define('IN_PHPBB', true);
+define('AJAX', true);
+require_once('UserManagement.inc.php');
 require_once('RenderCell.inc.php');
+require_once('AjaxError.inc.php');
 
 ?>
 <?php
@@ -17,13 +18,6 @@ function SplitProblemName($str) {
     } else {
         return "$str<br/>&nbsp;";
     }
-}
-
-function TotalColor($value) {
-    if ($value >= 1) return "background-color: rgb(0,255,0)";
-    if ($value <= .5) return "background-color: rgb(" . round(248 + (255 - 248) * $value * 2) . ", " . round(105 + (235 - 105) * $value * 2) . ", " . round(107 + (132 - 107) * $value * 2) . ")";
-    $value -= .5;
-    return "background-color: rgb(" . round(255 - (255 - 99) * $value * 2) . ", " . round(235 + (240 - 235) * $value * 2) . ", " . round(132 - (132 - 123) * $value * 2) . ")";
 }
 
 function fillConduit($ClassID, $ListID) {
@@ -99,8 +93,6 @@ function fillConduit($ClassID, $ListID) {
     $ColGroup .= '<col/>';
     // Номера задач
     $PrevGroup = null;
-    $NumProblems = 0;
-    $NumObligatory = 0;
     foreach ($Problems as $Problem) {
         if ($ConduitUser->may_manage('Marks')) {
             $hRow .= '<th scope="col" class="problemName" data-problem="' . $Problem['ID'] . '">';
@@ -116,18 +108,7 @@ function fillConduit($ClassID, $ListID) {
             $class = '';
         }
         $ColGroup .= '<col' . $class . ' data-sign="' . addslashes($Problem['Sign']) . '"/>';
-        $NumProblems += 1;
-        if($Problem['Sign'] !== "*" and $Problem['Sign'] !== "**") {
-            $NumObligatory += 1;
-        }
     }
-
-    if ($ConduitUser->may_manage('Marks')) {
-        // Добавляем столбец для результатов. Его можно будет скрыть при необходимости
-        $hRow .= '<th scope="col" class="problemName total" data-totalProblems="' . $NumProblems . '" data-obligatoryProblems="' . $NumObligatory . '">Сумма</th>';
-        $ColGroup .= '<col class="total"/>';
-    }
-
     $hRow .= '</tr>';
     $ColGroup .= '</colgroup>';
     
@@ -142,23 +123,15 @@ function fillConduit($ClassID, $ListID) {
         // Имя школьника
         $Row .= '<th scope="row" class="pupilName">' . $Pupil['Name'] . '</th>';
         // Сданные задачи
-        $TotalResult = 0.0;
         foreach ($Problems as $Problem) {
             if (isset($Marks[$Pupil['ID']][$Problem['ID']])) {
                 $Cell = new Cell($Marks[$Pupil['ID']][$Problem['ID']]);
-                $TotalResult += $Cell->price();
                 $Cell = $Cell->html();
             } else {
                 $Cell = '<td></td>';
             }
             $Row .= $Cell;
         }
-
-        if ($ConduitUser->may_manage('Marks')) {
-            // Записываем в ячейку текущее количество задач
-            $Row .= '<td class="total" style="' . TotalColor($TotalResult / $NumObligatory) . '" data-obligatoryProblems="' . $NumObligatory . '">' . $TotalResult . '</td>';
-        }
-
         $Row .= "</tr>";
         $TBody .= $Row;
     }
@@ -171,7 +144,13 @@ function fillConduit($ClassID, $ListID) {
     $FloatTable = "<table class=\"conduit\">$ColGroup<thead>$hRow</thead></table>";
     $FloatDiv = "<div class=\"floatHeader\" style=\"display:none;\">$FloatTable</div>";
     
-    return $Table . $FloatDiv;
+    echo $Table . $FloatDiv;
+}
+
+try {
+    fillConduit($Class['ID'], $_POST['List']);
+} catch (Exception $e) {
+    triggerAjaxError(404);
 }
 
 ?>

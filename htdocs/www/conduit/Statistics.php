@@ -19,7 +19,7 @@ $ConduitUser->must_manage('Marks');
     <title><?php echo $Class['Description'];?>: статистика</title>
     
     <!-- Подключаем jQuery -->
-    <script type="text/javascript" src="http://yastatic.net/jquery/2.1.1/jquery.min.js"></script>
+    <script type="text/javascript" src="//yastatic.net/jquery/2.1.1/jquery.min.js"></script>
 
     <!-- Остальные скрипты -->
     <script type="text/javascript">
