@@ -21,6 +21,7 @@ function SplitProblemName($str) {
 
 function TotalColor($value) {
     if ($value >= 1) return "background-color: rgb(0,255,0)";
+    if ($value <= 0) return "background-color: rgb(255,0,0)";
     if ($value <= .5) return "background-color: rgb(" . round(248 + (255 - 248) * $value * 2) . ", " . round(105 + (235 - 105) * $value * 2) . ", " . round(107 + (132 - 107) * $value * 2) . ")";
     $value -= .5;
     return "background-color: rgb(" . round(255 - (255 - 99) * $value * 2) . ", " . round(235 + (240 - 235) * $value * 2) . ", " . round(132 - (132 - 123) * $value * 2) . ")";
@@ -63,7 +64,7 @@ function fillConduit($ClassID, $ListID, $toJSON = false) {
     $stmt->execute(array($ListID));
     $Problems = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-    // Готовим информацию об оценках
+    // Готовим информацию о самом листке
     $sql = "SELECT 
                 `PList`.`ID` AS `ID`,
                 `PList`.`ListTypeID` AS `ListTypeID`,
@@ -82,6 +83,11 @@ function fillConduit($ClassID, $ListID, $toJSON = false) {
     $stmt->execute(array($ListID));
     $Lists = $stmt->fetchAll(PDO::FETCH_ASSOC);
     foreach ($Lists as $List) {
+        // Здесь мы в $List сохранили инфу
+        if ($List['MinFor5'] < 0) {
+            $show_marks = false;
+            // См. также код ниже, который пока игнорирует этот параметр
+        }
     };
 
     
@@ -138,6 +144,7 @@ function fillConduit($ClassID, $ListID, $toJSON = false) {
     $NumProblems = 0;
     $NumObligatory = 0;
     $MaxPoints = 0;
+    $PointsObligatory = 0;
     foreach ($Problems as $Problem) {
         if ($ConduitUser->may_manage('Marks')) {
             $hRow .= '<th scope="col" class="problemName" data-problem="' . $Problem['ID'] . '">';
@@ -159,9 +166,25 @@ function fillConduit($ClassID, $ListID, $toJSON = false) {
         $NumProblems += 1;
         if($Problem['Sign'] !== "*" and $Problem['Sign'] !== "**" and mb_substr($Problem['Name'],0,6,"UTF-8") !== "Оценка") {
             $NumObligatory += 1;
+            $PointsObligatory += $Problem['ProbValue'];
         }
-        $MaxPoints += $Problem['ProbValue'];
+        if(mb_substr($Problem['Name'],0,6,"UTF-8") !== "Оценка") {
+            $MaxPoints += $Problem['ProbValue'];
+        }
     }
+
+    // Проставляем границы оценок, если они недоуказаны:
+    if ($List['MinFor5'] < 0) {
+        $List['MinFor5'] = $PointsObligatory;
+    }
+    if ($List['MinFor3'] < 0) {
+        $List['MinFor3'] = $List['MinFor5'] * 3 / 7;
+    }
+    if ($List['MinFor4'] < 0) {
+        $List['MinFor4'] = ($List['MinFor3'] + $List['MinFor5']) / 2;
+    }
+    // Теперь гарантированно все границы заданы
+
 
     if ($ConduitUser->may_manage('Marks')) {
         // Добавляем столбец для результатов. Его можно будет скрыть при необходимости
@@ -194,24 +217,46 @@ function fillConduit($ClassID, $ListID, $toJSON = false) {
         $Row .= '<th scope="row" class="pupilName">' . $Pupil['Name'] . '</th>';
         // Сданные задачи
         $TotalResult = 0.0;
+        $TotalPoints = 0.0;
+
+
         foreach ($Problems as $Problem) {
             if (isset($Marks[$Pupil['ID']][$Problem['ID']])) {
                 $Cell = new Cell($Marks[$Pupil['ID']][$Problem['ID']]);
-                $TotalResult += $Cell->price();
+                if (mb_substr($Problem['Name'],0,6,"UTF-8") !== "Оценка") {
+                    if ($Cell->price() > 0) {
+                        $TotalResult += $Cell->price();
+                        $TotalPoints += $Cell->price() * $Problem['ProbValue'];
+                    } else {
+                        $TotalPoints -= $Problem['NotSolvedPen'];
+                    }
+                }
                 $Cell = $Cell->html();
             } else {
+                if (mb_substr($Problem['Name'],0,6,"UTF-8") !== "Оценка") {
+                    $TotalPoints -= $Problem['NotSolvedPen'];
+                }
                 $Cell = '<td></td>';
             }
             $Row .= $Cell;
+        }
+
+        if ($TotalPoints >= $List['MinFor4']) {
+            $CurMark = ($TotalPoints - $List['MinFor4']) / ($List['MinFor5'] - $List['MinFor4']) + 3.5;
+        } else {
+            $CurMark = ($TotalPoints - $List['MinFor3']) / ($List['MinFor4'] - $List['MinFor3']) + 2.5;
         }
 
         if ($ConduitUser->may_manage('Marks')) {
             // Записываем в ячейку текущее количество задач
             $Row .= '<td class="total" style="' . TotalColor($TotalResult / $NumObligatory) . '" data-obligatoryProblems="' . $NumObligatory . '">' . $TotalResult . '</td>';
             // Записываем в ячейку текущее количество баллов
-            $Row .= '<td class="total" style="' . TotalColor($TotalResult / $NumObligatory) . '" data-maxpoints="' . $MaxPoints . '">' . $TotalResult . '</td>';
+            $Row .= '<td class="total" style="' . TotalColor($TotalPoints / $MaxPoints) . '" data-maxpoints="' . $MaxPoints . '">' . round($TotalPoints,1) . '</td>';
             // Записываем в ячейку текущую оценку
-            $Row .= '<td class="total" style="' . TotalColor($TotalResult / $NumObligatory) . '" data-minfor3="' . $List['MinFor3'] . '">' . round(($TotalResult / $NumObligatory) * 5, 1) . '</td>';
+            $Row .= '<td class="total" style="' . TotalColor($CurMark / 5) . '" ' . 'data-minfor3="' . $List['MinFor3'] . '" ' 
+                                                                                                   . 'data-minfor4="' . $List['MinFor4'] . '" ' 
+                                                                                                   . 'data-minfor5="' . $List['MinFor5'] . '" ' 
+                     . '>' . round($CurMark, 1) . '</td>';
         }
 
         $Row .= "</tr>";

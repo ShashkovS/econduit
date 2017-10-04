@@ -207,6 +207,8 @@
         function TotalColor(value) {
             if (value >= 1) {
                 return "rgb(0,255,0)";
+            } else if (value <= 0) {
+                return "rgb(255,0,0)";
             } else if (value <= 0.5) {
                 value = value * 2;
                 return "rgb(" + Math.round(248 + (255 - 248) * value).toString() + ", " 
@@ -253,8 +255,16 @@
                 context: $('.conduit_container[data-id="' + Request.List + '"]>.conduit'),
                 success: function(Response){
                             for(var i = 0, l = Response.length; i < l; i++) {
-                                var x = this.find('.headerRow').eq(0).children('[data-problem="'+Response[i].Problem+'"]')[0].cellIndex;
+                                var $headerRow = this.find('.headerRow').eq(0);
+                                var x = $headerRow.children('[data-problem="'+Response[i].Problem+'"]')[0].cellIndex;
                                 var $Cell = this.find('tr[data-pupil="'+Response[i].Pupil+'"]').children().eq(x);
+                                var $table = $Cell.closest("table");
+                                var $li = $Cell.closest("li");
+                                var mf3 = parseFloat($li.attr('data-mf3'));
+                                var mf4 = parseFloat($li.attr('data-mf4'));
+                                var mf5 = parseFloat($li.attr('data-mf5'));
+
+                                var $colgroup = $table.children("colgroup");
                                 $Cell.html(Response[i].Text);
                                 $Cell.removeClass('loading_mark');
                                 if (typeof(Response[i].Hint) !== 'undefined'){
@@ -276,14 +286,49 @@
                                 // Теперь нужно пересчитать сумму. Пока просто пройдёмся по всей строке и просуммируем
                                 var $ThisRow = this.find('tr[data-pupil="'+Response[i].Pupil+'"]');
                                 var sum = 0;
+                                var points = 0;
+                                var cur_price = 0;
+                                var cur_val = 0;
+                                var cur_pen = 0;
+                                var max_points = 0;
+                                var cur_mark = 0;
                                 $ThisRow.children("[data-mark]").each(function(){
-                                    sum += Price($(this).attr('data-mark'));
+                                    if ($headerRow.children().eq($(this).index()).html().indexOf('Оценка') < 0) {
+                                        cur_price = Price($(this).attr('data-mark'));
+                                        sum += cur_price;
+                                        // Также считаем стоимость данной задачи и штраф за отсутствие решения
+                                        cur_val = parseFloat($colgroup.children().eq($(this).index()).attr('data-probvalue'));
+                                        cur_pen = parseFloat($colgroup.children().eq($(this).index()).attr('data-notsolvedpen'));
+                                        max_points += cur_val;
+                                        if (cur_price > 0) {
+                                            points += cur_val * cur_price;
+                                        } else {
+                                            points -= cur_pen;
+                                        }
+                                    }
                                 });
-                                var $TotalCell = $ThisRow.children(":last")
+                                // Ячейка с кол-вом задач
+                                var $TotalCell = $ThisRow.children(":nth-last-child(3)")
                                 $TotalCell.text(+(Math.round(sum + "e+2")  + "e-2")); // Здесь хитрый трюк для правильного округления
-                                // Подкрашиваем
                                 var obligatory = parseInt($TotalCell.attr('data-obligatoryproblems'));
                                 $TotalCell.css("background-color", TotalColor(sum / obligatory));
+                                // Ячейка с кол-вом баллов
+                                var $TotalCell = $ThisRow.children(":nth-last-child(2)")
+                                $TotalCell.text(+(Math.round(points + "e+2")  + "e-2")); // Здесь хитрый трюк для правильного округления
+                                $TotalCell.css("background-color", TotalColor(points / max_points));
+                                // Ячейка с оценкой
+                                if (mf5 < 0) {mf5 = obligatory;}
+                                if (mf3 < 0) {mf3 = mf5 * 3 / 7;}
+                                if (mf4 < 0) {mf4 = (mf3 + mf5) / 2;}
+                                if (points > mf4) {
+                                    cur_mark = (points - mf4) / (mf5 - mf4) + 3.5;
+                                } else {
+                                    cur_mark = (points - mf3) / (mf4 - mf3) + 2.5;
+                                }
+                                cur_mark = Math.round(cur_mark * 10) / 10;
+                                var $TotalCell = $ThisRow.children(":nth-last-child(1)")
+                                $TotalCell.text(+(Math.round(cur_mark + "e+2")  + "e-2")); // Здесь хитрый трюк для правильного округления
+                                $TotalCell.css("background-color", TotalColor(cur_mark / 5));
                             }
                             if (Type === 'rollback') {
                                 // Удаляем запрос из стека запросов
