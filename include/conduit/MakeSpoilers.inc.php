@@ -9,9 +9,31 @@ require_once('FillConduit.inc.php');
 ?>
 <?php
 
-function listDisplayName($number, $description) {
-    return filter_var($number . ' - ' . $description, FILTER_SANITIZE_SPECIAL_CHARS);
+// function listDisplayName($number, $description) {
+//     return filter_var($number . ' - ' . $description, FILTER_SANITIZE_SPECIAL_CHARS);
+// }
+function listDisplayName($number, $description, $MinFor5, $MinFor4, $MinFor3) {
+    $dname = $number . ' — ' . $description;
+    $nname = ' з. на ';
+    if ($MinFor5 > 0) {
+        $dname = $dname . ' (' . (int)($MinFor5);
+        $nname = $nname . '5';
+        if ($MinFor4 > 0) {
+            $dname = $dname . '/' . (int)($MinFor4);
+            $nname = $nname . '/4';
+        }
+        if ($MinFor3 > 0) {
+            $dname = $dname . '/' . (int)($MinFor3);
+            $nname = $nname . '/3';
+        }
+        $dname = $dname . $nname . ")";
+    }
+    $dname = filter_var($dname, FILTER_SANITIZE_SPECIAL_CHARS);
+    // $dname = str_replace('_span_start_here', '<span>', $dname);
+    // $dname = str_replace('_span_end_here', '</span>', $dname);
+    return $dname;
 }
+
 
 function compareList(&$a, &$b) {
     if ($a['Type'] !== $b['Type']) {
@@ -37,7 +59,8 @@ function makeSpoilers($ClassID, $toJSON = false) {
     $i = 0;
     $List = array();
     while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-        $Text = listDisplayName($row['Number'], $row['Description']);
+        // $Text = listDisplayName($row['Number'], $row['Description']);
+        $Text = listDisplayName($row['Number'], $row['Description'], $row['MinFor5'], $row['MinFor4'], $row['MinFor3']);
         $ID = $row['ID'];
         $List[$i++] = array(
             'ID'   => $ID,

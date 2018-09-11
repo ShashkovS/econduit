@@ -9,9 +9,24 @@ require_once('Connect.inc.php');
 ?>
 <?php
 
-function listDisplayName($number, $description) {
-    return filter_var($number . ' - ' . $description, FILTER_SANITIZE_SPECIAL_CHARS);
+function listDisplayName($number, $description, $min5, $min4, $min3) {
+    $dname = 'жужа' . $number . ' — ' . $description;
+    $nname = ' з. на 5';
+    if $min5 > 0 {
+        $dname = $dname . ' (' . $min5;
+        if $min4 > 0 {
+            $dname = $dname . '/' . $min4;
+            $nname = $nname . '/4';
+        }
+        if $min3 > 0 {
+            $dname = $dname . '/' . $min3;
+            $nname = $nname . '/3';
+        }
+        $dname = $dname . $nname . ")";
+    }
+    return filter_var($dname, FILTER_SANITIZE_SPECIAL_CHARS);
 }
+
 
 function compareList(&$a, &$b) {
     if ($a['Type'] !== $b['Type']) {
@@ -36,7 +51,7 @@ function fillConduits($ClassID) {
     $i = 0;
     $List = array();
     while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-        $Text = listDisplayName($row['Number'], $row['Description']);
+        $Text = listDisplayName($row['Number'], $row['Description'], $row['MinFor5'], $row['MinFor4'], $row['MinFor3']);
         $ID = $row['ID'];
         $List[$i++] = array(
             'ID'   => $ID,

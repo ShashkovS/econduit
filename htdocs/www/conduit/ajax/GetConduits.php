@@ -12,7 +12,7 @@ require_once('AjaxError.inc.php');
 try {
     $toJSON = isset($_POST['toJSON']);
     if ($toJSON) {
-        header('Content-type: application/json');
+        //header('Content-type: application/json');
     }
     makeSpoilers($Class['ID'], $toJSON);
 } catch (Exception $e) {

@@ -20,7 +20,7 @@ require_once('FillConsoleData.inc.php');
 
     <!-- Подключаем jQuery -->
     <script type="text/javascript" src="//yastatic.net/jquery/2.1.1/jquery.min.js"></script>
-    <script type="text/javascript" src="//www.shashkovs.ru/forum179/conduit/js/jquery.terminal-0.8.8.min.js"></script>
+    <script type="text/javascript" src="//www.shashkovs.ru/forum179/conduit179_test/js/jquery.terminal-0.8.8.min.js"></script>
 
     <!-- Остальные скрипты -->
     <script type="text/javascript">

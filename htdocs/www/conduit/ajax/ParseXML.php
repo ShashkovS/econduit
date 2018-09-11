@@ -67,6 +67,10 @@ class TListok {
     public $type;
     public $description;
     public $date;
+    public $marks;
+    public $MinFor5;
+    public $MinFor4;
+    public $MinFor3;
     public $problems;
     public $problemCount;
     public $class;
@@ -88,6 +92,22 @@ class TListok {
         }
         $this->description = $node->getAttribute('description');
         $this->date = $node->getAttribute('date');
+        $this->marks = $node->getAttribute('marks');
+        // Парсим строчку с границами оценок
+        $marks_arr = explode("/", $this->marks);
+        $this->MinFor5 = -1;
+        $this->MinFor4 = -1;
+        $this->MinFor3 = -1;
+        if (array_key_exists(0, $marks_arr)) {
+            $this->MinFor5 = (int)($marks_arr[0]);
+        }
+        if (array_key_exists(1, $marks_arr)) {
+            $this->MinFor4 = (int)($marks_arr[1]);
+        }
+        if (array_key_exists(2, $marks_arr)) {
+            $this->MinFor3 = (int)($marks_arr[2]);
+        }
+
         if (isset($class)) {
             $this->class = $class;
         } else {
@@ -104,22 +124,32 @@ class TListok {
     
     function write2SQL() {
         global $conduit_db;
-        $sql = 'INSERT INTO `PList` (`ListTypeID`, `ClassID`, `Number`, `Description`, `Date`) 
-                    VALUES (:type, :class, :number, :desc, :date)';
+
+        $sql = 'INSERT INTO `PList` (`ListTypeID`, `ClassID`, `Number`, `Description`, `Date`, `MinFor5`, `MinFor4`, `MinFor3`) 
+                    VALUES (:type, :class, :number, :desc, :date, :minfor5, :minfor4, :minfor3)';
         $stmt = $conduit_db->prepare($sql);
         $stmt->execute(array(
             ':type'   => $this->type, 
             ':class'  => $this->class,
             ':number' => $this->number,
             ':desc'   => $this->description,
-            ':date'   => $this->date
+            ':date'   => $this->date,
+            ':minfor5'   => $this->MinFor5,
+            ':minfor4'   => $this->MinFor4,
+            ':minfor3'   => $this->MinFor3
         ));
         $ListID = $conduit_db->lastInsertId(); // узнаём ID добавленной записи
         foreach ($this->problems as $problem) {
             $problem->write2SQL($ListID);
         }
+        $sql2 = 'INSERT INTO `PProblem` (`ProblemTypeID`, `ListID`, `Number`, `Group`, `Name`) 
+                    VALUES (3, :list, 999, 999, "Оценка")';
+        $stmt2 = $conduit_db->prepare($sql2);
+        $stmt2->execute(array(
+            ':list'   => $ListID, 
+        ));
     }
-    
+
     static function checkType($t) {
         if (!isset(self::$typesArray)) {
             global $conduit_db;
@@ -169,9 +199,9 @@ try {
     $XML = mb_ereg_replace("’|‘|`", "'", $_POST['XML']);
     
     // Парсим XML
-	parseListok($XML, $Class['ID']);
-	$Response['code']    = 0;
-	$Response['message'] = 'Listok uploaded successfully!';
+    parseListok($XML, $Class['ID']);
+    $Response['code']    = 0;
+    $Response['message'] = 'Listok uploaded successfully!';
     
 } catch (Exception $e) {
     $Response['code']    = 1;
