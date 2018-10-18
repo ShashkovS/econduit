@@ -17,12 +17,17 @@
     user-select: none;
     font-family: "Helvetica Narrow", "Arial Narrow", sans-serif;
 }
+
 .conduit th, .conduit td {
     border: thin solid;
 }
 
 .conduit td {
     font-family: Marks, "Helvetica Narrow", "Arial Narrow", sans-serif;
+}
+
+.conduit td[class~='active'], .conduit th[class~='active-person'], .conduit th[class~='active-problem'] {
+    box-shadow: inset 0 0 0 1.5px orangered;
 }
 
 /* Двойная граница между задачами */
