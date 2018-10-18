@@ -50,32 +50,32 @@
         }
 
         this.resizeRuler = function() {
-            var $Ruler = $('#Ruler');
-            $Ruler.height($('#XML').height());
-            // Проверяем, что вся линейка заполнена
-            var cur = $Ruler.scrollTop();
-            $Ruler.scrollTop(cur + 1);
-            while ($Ruler.scrollTop() <= cur) {
-                var text = $Ruler.html();
-                for(var i = 0; i < 50; i++) {
-                    text += "<br/>"+(++rulersize);
-                }
-                $Ruler.html(text).scrollTop(cur + 1);
-            }
-            $Ruler.scrollTop(cur);
+            // var $Ruler = $('#Ruler');
+            // $Ruler.height($('#XML').height());
+            // // Проверяем, что вся линейка заполнена
+            // var cur = $Ruler.scrollTop();
+            // $Ruler.scrollTop(cur + 1);
+            // while ($Ruler.scrollTop() <= cur) {
+            //     var text = $Ruler.html();
+            //     for(var i = 0; i < 50; i++) {
+            //         text += "<br/>"+(++rulersize);
+            //     }
+            //     $Ruler.html(text).scrollTop(cur + 1);
+            // }
+            // $Ruler.scrollTop(cur);
         }
         
         this.scrollRuler = function() {
-            var $Ruler = $('#Ruler');
-            var desired = $('#XML').scrollTop();
-            $Ruler.scrollTop(desired);
-            while ($Ruler.scrollTop() < desired) {
-                var text = $Ruler.html();
-                for(var i = 0; i < 50; i++) {
-                    text += "<br/>"+(++rulersize);
-                }
-                $Ruler.html(text).scrollTop(desired);
-            }
+            // var $Ruler = $('#Ruler');
+            // var desired = $('#XML').scrollTop();
+            // $Ruler.scrollTop(desired);
+            // while ($Ruler.scrollTop() < desired) {
+            //     var text = $Ruler.html();
+            //     for(var i = 0; i < 50; i++) {
+            //         text += "<br/>"+(++rulersize);
+            //     }
+            //     $Ruler.html(text).scrollTop(desired);
+            // }
         }
         
         // object itself (for access to public methods and properties)

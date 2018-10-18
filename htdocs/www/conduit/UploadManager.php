@@ -55,7 +55,7 @@ $ConduitUser->must_manage('Lists');
     <div>
         Введите XML:<br />
         <div>
-            <code id="Ruler" hidden="hidden" data-size=1>1</code>
+         <!--   <code id="Ruler" hidden="hidden" data-size=1>1</code> -->
             <textarea id="XML" name="XML" form="uploadForm" required="required" 
                       rows="20" wrap="off" maxlength="100000" spellcheck="false"
                       onscroll="UploadManager.scrollRuler()"></textarea>
@@ -82,7 +82,8 @@ $ConduitUser->must_manage('Lists');
 </span></span>
 </code></pre>
 
-        <p>Для задач type 0 - обычная, 1 - со звёздочкой, 2 - с двумя звёздочками; Для листка type 1 - обычный, 2 - дополнительный.</p>
+        <p>Для задач type 0 — обычная, 1 — со звёздочкой, 2 — с двумя звёздочками, 3 — важная, 4 — письменная; 
+        <p>Для листка type 1 — обычный, 2 — дополнительный, 5 — контрольная.</p>
     </div>    
 
     <script type="text/javascript">

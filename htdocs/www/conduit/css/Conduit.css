@@ -5,6 +5,7 @@
 
 /* Внешний вид самой таблицы */
 .conduit {
+    touch-action: manipulation;
     border-collapse: collapse;
     border: thin solid;
     cursor: default;

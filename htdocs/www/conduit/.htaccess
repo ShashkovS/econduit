@@ -22,9 +22,12 @@ DirectoryIndex Conduits.php
 
 <IfModule mod_rewrite.c>
     RewriteEngine On
+    # RewriteRule %{THE_REQUEST} /a22/ https://www.shashkovs.ru/forum179/conduit179_test/b22/ [R=301,L]
+    RewriteCond %{THE_REQUEST} /a22/ [NC]
+    RewriteRule ^.*$ https://www.shashkovs.ru/forum179/conduit179_test/b22/ [R=301,L]
     
     # Отрезаем от пути к файлу каталоги (начиная с левого) до тех пор, пока не получится существующий файл.
-    # Используется для преобразования запроса вида conduit/d17/Conduits.php в conduit/Conduits.php
+    # Используется для преобразования запроса вида conduit/b17/Conduits.php в conduit/Conduits.php
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteRule ^(.*?)/(.*)$ $2 [L]
@@ -49,15 +52,15 @@ AddOutputFilterByType DEFLATE text/html text/css application/x-javascript applic
 
 
 # Пути для поиска файлов
-php_value include_path ".:/home/host1333511/econduit.ru/htdocs/www/conduit/:/home/host1333511/econduit.ru/include/conduit/"
+php_value include_path ".:/home/host1000218/shashkovs.ru/htdocs/www/forum179/conduit179_test/:/home/host1000218/shashkovs.ru/include/conduit179_test/"
 
 
 # Сообщения об ошибках
-ErrorDocument 401 /conduit/401.html
-ErrorDocument 404 /conduit/404.html
-ErrorDocument 500 /conduit/500.html
+ErrorDocument 401 /forum179/conduit179_test/401.html
+ErrorDocument 404 /forum179/conduit179_test/404.html
+ErrorDocument 500 /forum179/conduit179_test/500.html
 
 # Логирование ошибок
 php_value display_errors off
 php_value display_startup_errors off
-php_value error_log "/home/host1333511/econduit.ru/logs/conduit/php.log"
+php_value error_log "/home/host1000218/shashkovs.ru/logs/conduit179/php.log"

@@ -22,6 +22,9 @@ CREATE TABLE IF NOT EXISTS `PList` (
   `Number` varchar(15) NOT NULL COMMENT 'Номер',
   `Description` varchar(100) NOT NULL COMMENT 'Описание',
   `Date` varchar(50) NOT NULL COMMENT 'Дата листка',
+  `MinFor5` decimal(5,2) NOT NULL DEFAULT '-1.00' COMMENT 'Минимальное кол-во баллов на 5-ку',
+  `MinFor4` decimal(5,2) NOT NULL DEFAULT '-1.00' COMMENT 'Минимальное кол-во баллов на 4-ку',
+  `MinFor3` decimal(5,2) NOT NULL DEFAULT '-1.00' COMMENT 'Минимальное кол-во баллов на 3-ку',
   PRIMARY KEY (`ID`),
   KEY `ListType` (`ListTypeID`),
   KEY `ClassID` (`ClassID`)
@@ -50,6 +53,8 @@ CREATE TABLE IF NOT EXISTS `PProblemType` (
   `ID` int(6) NOT NULL AUTO_INCREMENT COMMENT 'Уникальный ID',
   `Sign` char(3) NOT NULL COMMENT 'Обозначение',
   `Description` varchar(100) NOT NULL COMMENT 'Описание',
+  `ProbValue` decimal(4,2) NOT NULL DEFAULT '1.00' COMMENT 'Стоимость задачи при вычислении оценки',
+  `NotSolvedPen` decimal(4,2) NOT NULL DEFAULT '0.00' COMMENT 'Штраф за нерешённую задачу',
   PRIMARY KEY (`ID`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COMMENT='Типы задач' ;
 
@@ -107,9 +112,11 @@ CREATE TABLE IF NOT EXISTS `PUser` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Пользовательские группы';
 
 CREATE TABLE IF NOT EXISTS `PUserRole` (
+  `ID` int(10) NOT NULL AUTO_INCREMENT COMMENT 'Unique ID',
   `User` varchar(50) NOT NULL COMMENT 'Пользователь',
   `Class` varchar(15) NOT NULL COMMENT 'Класс',
   `Role` varchar(10) NOT NULL COMMENT 'Роль',
+  PRIMARY KEY (`ID`),
   KEY `User` (`User`),
   KEY `ClassID` (`Class`),
   KEY `Role` (`Role`)
